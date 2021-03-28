@@ -1,0 +1,19 @@
+<span id="a">root@adithyanak.com</span>:<span id="b">~</span><span id="c">#</span> cat aboutme.txt<br/><br/>
+<!-- My favorite code quote, "<span id="k">Code for Everyone</span>". -->
+I'm Adithyan and I'm an Offensive Security Certified Professional (OSCP) and a Certified Ethical Hacker (Master). I practice and preach Offensive Security. My area of expertise includes Open Source Intelligence, Application, and Network Security. I actively research Exploit Development and Malware Analysis. I have been a learner in the field of Information Security for more than 7 years now. 
+
+I write a <a href="https://adithyanak.medium.com" target="_blank">blog</a> and establish my findings there as a contribution to the InfoSec community
+
+I develop some cool projects occasionally which you can find on my <a href="https://github.com/adithyan-ak" target="_blank">Github</a>.
+
+My <a href="Resume.pdf" target="_blank">Resume</a> can shed light on who I am.
+
+You can reach me via <a href="mailto:root@adithyanak.com">Email</a>
+
+<span id="a">Certfications:</span>
+
+    # OSCP
+    # CEH ANSI V10
+    # CEH Practical
+
+<p>./logout</p>
