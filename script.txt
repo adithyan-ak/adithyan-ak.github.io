@@ -14,9 +14,9 @@ Feel free to reach me at <a href="mailto:root@adithyanak.com">root@adithyanak.co
 <div id="pgp"></div>
 My other social media handles include 
 
-# <a href="https://www.linkedin.com/in/akinfosec/" target="_blank">LinkedIn</a>
-# <a href="https://twitter.com/adithyan_ak" target="_blank">Twitter</a>
-# <a href="https://www.instagram.com/adithyan.ak/" target="_blank">Instagram</a> 
-# <a href="https://www.facebook.com/AkInfoSec" target="_blank">Facebook</a>
+# <a href="https://www.linkedin.com/in/akoffsec/" target="_blank">LinkedIn</a>
+# <a href="https://twitter.com/akoffsec" target="_blank">Twitter</a>
+# <a href="https://www.instagram.com/akoffsec/" target="_blank">Instagram</a> 
+# <a href="https://www.facebook.com/akoffsec" target="_blank">Facebook</a>
 
 <span id="a">root@adithyanak.com</span>:<span id="b">~</span><span id="c">#</span> exit 
