@@ -1,10 +1,10 @@
 <span id="a">root@adithyanak.com</span>:<span id="b">~</span><span id="c">#</span> cat aboutme.txt<br/><br/>
 <!-- My favorite code quote, "<span id="k">Code for Everyone</span>". -->
-I'm Adithyan Arun Kumar, an Offensive Security Certified Professional (OSCP) and a Certified Ethical Hacker (Master). I love to research on Offensive Security. My area of expertise involves Open Source Intelligence, Application, and Network Security. At present, I'm researching into Exploit Development and Malware Analysis. I'm an avid learner in the field of Information Security for more than 7 years now. 
+I'm Adithyan Arun Kumar, an Offensive Security Certified Professional (OSCP) and a Certified Ethical Hacker (Master). I love to research on Offensive Security. My area of expertise involves Open Source Intelligence, Application, and Network Security. At present, I'm interested on Exploit Development and Malware Analysis. I'm an avid learner in the field of Information Security for more than 7 years now. 
 
-My <a href="Resume.pdf" target="_blank">resume</a> can shed some light on who I am.
+My <a href="Resume.pdf" target="_blank">resume</a> can throw light on who I am.
 
-I intermittently write <a href="https://blog.adithyanak.com" target="_blank">blog</a> and establish my findings there as a contribution to the InfoSec community
+I create infosec related <a href="https://www.youtube.com/channel/UC2jlbyDe2JxhBQt6rwyDMMQ" target="_blank">videos</a> and write <a href="https://blog.adithyanak.com" target="_blank">blog</a> where I establish my findings as a contribution to the InfoSec community
 
 I develop some cool projects occasionally which you can find on my <a href="https://github.com/adithyan-ak" target="_blank">Github</a>.
 
