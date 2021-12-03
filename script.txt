@@ -1,8 +1,8 @@
 <span id="a">root@adithyanak.com</span>:<span id="b">~</span><span id="c">#</span> cat aboutme.txt<br/><br/>
 <!-- My favorite code quote, "<span id="k">Code for Everyone</span>". -->
-I'm Adithyan Arun Kumar, an Offensive Security Certified Professional (OSCP) and a Certified Ethical Hacker (Master). I'm a Security Engineer at <a href="https://www.linkedin.com/company/primefort" target="_blank">PrimeFort</a> by day and Red Team Researcher at <a href="https://www.linkedin.com/company/synack-red-team" target="_blank">Synack Red Team</a> by night. My area of interest and expertise involves Offensive Security, Open Source Intelligence, Application & Network Security and Host penetration testing. I'm a zealous learner of Information Security for more than 7 years now. 
+I'm Adithyan Arun Kumar, an Offensive Security Certified Professional (OSCP) and a Certified Ethical Hacker (Master). I'm a graduate student pursuing Information Secutity at Carnegie Mellon University by day and Red Team Researcher at <a href="https://www.linkedin.com/company/synack-red-team" target="_blank">Synack Red Team</a> by night. My area of interest and expertise involves Offensive Security, Red Teaming, Open Source Intelligence, Application & Network Security and Host penetration testing. I'm a zealous learner of Information Security for more than 7 years now. 
 
-Here's my <a href="Resume.pdf" target="_blank">resume</a> if you are looking to hire/stalk me.
+Here's my <a href="javascript:alert('Nice try, Stalker');" target="_blank">resume</a> if you are looking to hire me.
 
 I create infosec related <a href="https://www.youtube.com/channel/UC2jlbyDe2JxhBQt6rwyDMMQ" target="_blank">videos</a> and write <a href="https://blog.adithyanak.com" target="_blank">blog</a> where I establish my findings as a contribution to the InfoSec community. I also develop some cool <a href="https://github.com/adithyan-ak" target="_blank">Projects</a> occasionally.
 
