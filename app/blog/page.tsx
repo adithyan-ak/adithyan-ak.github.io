@@ -1,15 +1,34 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { fieldNotes } from "../data";
+import { getAllPosts } from "@/lib/posts";
+import { pageAlternates } from "@/lib/seo";
+import { postPath } from "@/lib/site";
 import styles from "./dossier-blog.module.css";
 
 export const metadata: Metadata = {
   title: "Field Notes — Adithyan Arun Kumar",
   description:
     "Declassified research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
+  alternates: pageAlternates("/blog"),
+  openGraph: {
+    type: "website",
+    url: "/blog",
+    title: "Field Notes — Adithyan Arun Kumar",
+    description:
+      "Declassified research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Field Notes — Adithyan Arun Kumar",
+    description:
+      "Declassified research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
+    images: ["/og-dossier.png"],
+  },
 };
 
 export default function DossierFieldNotes() {
+  const posts = getAllPosts();
+
   return (
     <div className={styles.scene}>
       <a className={styles.skipLink} href="#field-note-index">
@@ -36,7 +55,7 @@ export default function DossierFieldNotes() {
                 <span>Series</span> AK–FN–2026
               </p>
               <p>
-                <span>Entries</span> {String(fieldNotes.length).padStart(2, "0")}
+                <span>Entries</span> {String(posts.length).padStart(2, "0")}
               </p>
               <p>
                 <span>Order</span> Newest first
@@ -65,25 +84,25 @@ export default function DossierFieldNotes() {
               <span>Filed</span>
             </div>
 
-            {fieldNotes.map((note) => (
+            {posts.map((post) => (
               <Link
                 className={styles.fileRow}
-                href={`/blog/${note.slug}`}
-                key={note.slug}
+                href={postPath(post.slug)}
+                key={post.slug}
               >
                 <div className={styles.fileNumber}>
-                  <span>FN–{note.index}</span>
-                  <small>{note.category}</small>
+                  <span>FN–{post.file}</span>
+                  <small>{post.category}</small>
                 </div>
                 <div className={styles.fileSubject}>
-                  <h2>{note.title}</h2>
-                  <p>{note.deck}</p>
+                  <h2>{post.title}</h2>
+                  <p>{post.deck}</p>
                   <small>
-                    {note.status} / {note.readTime} read
+                    {post.status} / {post.readingMinutes} min read
                   </small>
                 </div>
                 <div className={styles.fileDate}>
-                  <time dateTime={note.date}>{note.dateLabel}</time>
+                  <time dateTime={post.publishedAt}>{post.dateLabel}</time>
                   <span aria-hidden="true">Open ↗</span>
                 </div>
               </Link>

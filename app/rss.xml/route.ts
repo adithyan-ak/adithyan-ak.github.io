@@ -1,8 +1,7 @@
-import { fieldNotes } from "../data";
+import { getAllPosts } from "@/lib/posts";
+import { absoluteUrl, postPath, SITE } from "@/lib/site";
 
 export const dynamic = "force-static";
-
-const siteUrl = "https://adithyanak.com";
 
 function escapeXml(value: string) {
   return value
@@ -14,25 +13,30 @@ function escapeXml(value: string) {
 }
 
 export function GET() {
-  const items = fieldNotes
+  const posts = getAllPosts();
+  const items = posts
     .map(
       (post) => `
       <item>
         <title>${escapeXml(post.title)}</title>
-        <link>${siteUrl}/blog/${post.slug}</link>
-        <guid>${siteUrl}/blog/${post.slug}</guid>
-        <pubDate>${new Date(post.date).toUTCString()}</pubDate>
-        <description>${escapeXml(post.deck)}</description>
+        <link>${absoluteUrl(postPath(post.slug))}</link>
+        <guid isPermaLink="true">${absoluteUrl(postPath(post.slug))}</guid>
+        <pubDate>${new Date(post.publishedAt).toUTCString()}</pubDate>
+        <category>${escapeXml(post.category)}</category>
+        <description>${escapeXml(post.description)}</description>
       </item>`,
     )
     .join("");
 
   const feed = `<?xml version="1.0" encoding="UTF-8" ?>
-    <rss version="2.0">
+    <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
       <channel>
         <title>Adithyan Arun Kumar — Field Notes</title>
-        <link>${siteUrl}/blog</link>
-        <description>Research notes on AI agent infrastructure security.</description>
+        <link>${absoluteUrl("/blog")}</link>
+        <atom:link href="${absoluteUrl("/rss.xml")}" rel="self" type="application/rss+xml" />
+        <description>${escapeXml(SITE.description)}</description>
+        <language>${SITE.language}</language>
+        <lastBuildDate>${new Date(posts[0]?.updatedAt ?? Date.now()).toUTCString()}</lastBuildDate>
         ${items}
       </channel>
     </rss>`;

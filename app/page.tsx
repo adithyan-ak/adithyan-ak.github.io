@@ -4,20 +4,25 @@ import {
   advisories,
   capabilities,
   experience,
-  fieldNotes,
   publications,
   selectedSystems,
   talks,
 } from "./data";
+import { getAllPosts } from "@/lib/posts";
+import { pageAlternates } from "@/lib/seo";
+import { postPath } from "@/lib/site";
 import styles from "./dossier.module.css";
 
 export const metadata: Metadata = {
   title: "Declassified Dossier — Adithyan Arun Kumar",
   description:
     "The public research dossier of agentic security researcher Adithyan Arun Kumar.",
+  alternates: pageAlternates("/"),
 };
 
 export default function Home() {
+  const posts = getAllPosts().slice(0, 4);
+
   return (
     <div className={styles.scene}>
       <a className={styles.skipLink} href="#dossier-content">
@@ -185,20 +190,18 @@ export default function Home() {
             </div>
 
             <div className={styles.notesGrid}>
-              {fieldNotes.map((note) => (
-                <article className={styles.note} key={note.slug}>
+              {posts.map((post) => (
+                <article className={styles.note} key={post.slug}>
                   <div>
-                    <span>FN–{note.index}</span>
-                    <time dateTime={note.date}>{note.dateLabel}</time>
+                    <span>FN–{post.file}</span>
+                    <time dateTime={post.publishedAt}>{post.dateLabel}</time>
                   </div>
-                  <p>{note.category}</p>
+                  <p>{post.category}</p>
                   <h3>
-                    <Link href={`/blog/${note.slug}`}>
-                      {note.title}
-                    </Link>
+                    <Link href={postPath(post.slug)}>{post.title}</Link>
                   </h3>
-                  <p>{note.deck}</p>
-                  <small>{note.readTime} READ / PROTOTYPE</small>
+                  <p>{post.deck}</p>
+                  <small>{post.readingMinutes} MIN READ / PUBLISHED</small>
                 </article>
               ))}
             </div>

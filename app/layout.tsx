@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import { pageAlternates } from "@/lib/seo";
+import { SITE } from "@/lib/site";
 import "./globals.css";
 
 const body = Newsreader({
@@ -16,27 +18,29 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://adithyanak.com"),
+  metadataBase: new URL(SITE.url),
+  applicationName: SITE.name,
   title: {
-    default: "Declassified Dossier — Adithyan Arun Kumar",
+    default: SITE.title,
     template: "%s",
   },
-  description:
-    "The public research dossier of agentic security researcher Adithyan Arun Kumar.",
-  authors: [{ name: "Adithyan Arun Kumar", url: "https://adithyanak.com" }],
-  creator: "Adithyan Arun Kumar",
-  alternates: {
-    types: {
-      "application/rss+xml": "/rss.xml",
-    },
+  description: SITE.description,
+  authors: [{ name: SITE.name, url: SITE.url }],
+  creator: SITE.name,
+  referrer: "origin-when-cross-origin",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
   },
+  alternates: pageAlternates("/"),
   openGraph: {
     type: "website",
-    locale: "en_US",
-    siteName: "Adithyan Arun Kumar",
-    title: "Declassified Dossier — Adithyan Arun Kumar",
-    description:
-      "Agentic security research, open-source systems, advisories, and field notes.",
+    locale: SITE.locale,
+    siteName: SITE.name,
+    url: "/",
+    title: SITE.title,
+    description: SITE.description,
     images: [
       {
         url: "/og-dossier.png",
@@ -48,9 +52,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Declassified Dossier — Adithyan Arun Kumar",
-    description:
-      "Agentic security research, open-source systems, advisories, and field notes.",
+    title: SITE.title,
+    description: SITE.description,
     images: ["/og-dossier.png"],
   },
 };

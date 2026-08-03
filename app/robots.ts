@@ -9,5 +9,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
     },
     sitemap: "https://adithyanak.com/sitemap.xml",
+    host: "https://adithyanak.com",
   };
 }
