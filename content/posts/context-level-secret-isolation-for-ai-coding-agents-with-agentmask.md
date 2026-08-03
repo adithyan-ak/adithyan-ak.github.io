@@ -14,6 +14,9 @@ tags:
   - "Secrets Management"
   - "MCP"
 coverImage: "/images/posts/agentmask-cover.png"
+coverImageAlt: "AgentMask cover graphic showing a masked AI coding agent beside isolated secret tokens"
+coverImageWidth: 1536
+coverImageHeight: 1024
 status: "Published"
 draft: false
 ---

@@ -12,6 +12,9 @@ tags:
   - "AI Agents"
   - "Security Research"
 coverImage: "/images/posts/descriptive-cover.png"
+coverImageAlt: "Describe the visible subject and its relevance to the article"
+coverImageWidth: 1600
+coverImageHeight: 900
 status: "Published"
 draft: true
 ---

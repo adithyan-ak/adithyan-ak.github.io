@@ -17,6 +17,9 @@ export type PostFrontmatter = {
   category: string;
   tags: string[];
   coverImage?: string;
+  coverImageAlt?: string;
+  coverImageWidth?: number;
+  coverImageHeight?: number;
   status: "Published";
   draft: boolean;
   seoTitle?: string;
@@ -58,6 +61,20 @@ function assertString(value: unknown, field: string, filename: string) {
   return value;
 }
 
+function optionalPositiveInteger(
+  value: unknown,
+  field: string,
+  filename: string,
+) {
+  if (value === undefined) return undefined;
+  if (!Number.isInteger(value) || Number(value) <= 0) {
+    throw new Error(
+      `${filename}: frontmatter field "${field}" must be a positive integer`,
+    );
+  }
+  return Number(value);
+}
+
 function readFrontmatter(data: Record<string, unknown>, filename: string) {
   const tags = data.tags;
   if (!Array.isArray(tags) || tags.some((tag) => typeof tag !== "string")) {
@@ -82,6 +99,18 @@ function readFrontmatter(data: Record<string, unknown>, filename: string) {
     tags,
     coverImage:
       typeof data.coverImage === "string" ? data.coverImage : undefined,
+    coverImageAlt:
+      typeof data.coverImageAlt === "string" ? data.coverImageAlt : undefined,
+    coverImageWidth: optionalPositiveInteger(
+      data.coverImageWidth,
+      "coverImageWidth",
+      filename,
+    ),
+    coverImageHeight: optionalPositiveInteger(
+      data.coverImageHeight,
+      "coverImageHeight",
+      filename,
+    ),
     status: data.status,
     draft: data.draft,
     seoTitle: typeof data.seoTitle === "string" ? data.seoTitle : undefined,
@@ -94,6 +123,14 @@ function readFrontmatter(data: Record<string, unknown>, filename: string) {
   }
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/u.test(frontmatter.slug)) {
     throw new Error(`${filename}: "slug" must be lowercase and hyphen-separated`);
+  }
+  if (frontmatter.coverImage) {
+    assertString(frontmatter.coverImageAlt, "coverImageAlt", filename);
+    if (!frontmatter.coverImageWidth || !frontmatter.coverImageHeight) {
+      throw new Error(
+        `${filename}: coverImageWidth and coverImageHeight are required with coverImage`,
+      );
+    }
   }
   for (const field of ["publishedAt", "updatedAt"] as const) {
     if (Number.isNaN(Date.parse(frontmatter[field]))) {
@@ -201,11 +238,15 @@ function renderMarkdown(markdown: string) {
   };
 
   renderer.image = ({ href, title, text }) => {
-    const titleAttribute = title
-      ? ` title="${escapeAttribute(title)}"`
-      : "";
     const alt = text || "Research figure";
-    return `<img src="${escapeAttribute(href)}" alt="${escapeAttribute(alt)}" loading="lazy" decoding="async"${titleAttribute}>`;
+    const image = `<img src="${escapeAttribute(href)}" alt="${escapeAttribute(alt)}" loading="lazy" decoding="async">`;
+    if (!title) return image;
+    return `<figure>${image}<figcaption>${escapeAttribute(title)}</figcaption></figure>`;
+  };
+
+  renderer.table = function (token) {
+    const table = Renderer.prototype.table.call(this, token);
+    return `<div class="article-table-scroll" role="region" aria-label="Scrollable data table" tabindex="0">${table}</div>\n`;
   };
 
   return new Marked({ gfm: true, renderer }).parse(markdown) as string;

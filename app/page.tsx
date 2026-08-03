@@ -156,7 +156,7 @@ export default function Home() {
             <div className={styles.sectionHeading}>
               <p>Section 02</p>
               <h2 id="advisories-title">Public advisory ledger</h2>
-              <span>Reviewed records</span>
+              <span>{String(advisories.length).padStart(2, "0")} records</span>
             </div>
 
             <div className={styles.ledger} role="list">

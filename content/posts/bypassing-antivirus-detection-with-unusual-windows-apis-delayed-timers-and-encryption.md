@@ -14,6 +14,9 @@ tags:
   - "FlsAlloc"
   - "Offensive Security"
 coverImage: "/images/posts/windows-av-evasion-cover.webp"
+coverImageAlt: "Windows process and memory illustration for an antivirus-evasion research lab"
+coverImageWidth: 1792
+coverImageHeight: 1024
 status: "Published"
 draft: false
 ---

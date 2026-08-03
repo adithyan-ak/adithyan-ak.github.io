@@ -8,20 +8,20 @@ import styles from "./dossier-blog.module.css";
 export const metadata: Metadata = {
   title: "Field Notes — Adithyan Arun Kumar",
   description:
-    "Declassified research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
+    "Independent research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
   alternates: pageAlternates("/blog"),
   openGraph: {
     type: "website",
     url: "/blog",
     title: "Field Notes — Adithyan Arun Kumar",
     description:
-      "Declassified research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
+      "Independent research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
   },
   twitter: {
     card: "summary_large_image",
     title: "Field Notes — Adithyan Arun Kumar",
     description:
-      "Declassified research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
+      "Independent research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
     images: ["/og-dossier.png"],
   },
 };
@@ -97,9 +97,7 @@ export default function DossierFieldNotes() {
                 <div className={styles.fileSubject}>
                   <h2>{post.title}</h2>
                   <p>{post.deck}</p>
-                  <small>
-                    {post.status} / {post.readingMinutes} min read
-                  </small>
+                  <small>{post.readingMinutes} min read</small>
                 </div>
                 <div className={styles.fileDate}>
                   <time dateTime={post.publishedAt}>{post.dateLabel}</time>

@@ -21,6 +21,14 @@ export function postMetadata(post: Post): Metadata {
   const description = post.seoDescription ?? post.description;
   const canonicalPath = postPath(post.slug);
   const image = post.coverImage ?? "/og-dossier.png";
+  const imageAlt = post.coverImageAlt ?? post.title;
+  const imageMetadata = {
+    url: image,
+    alt: imageAlt,
+    ...(post.coverImageWidth && post.coverImageHeight
+      ? { width: post.coverImageWidth, height: post.coverImageHeight }
+      : {}),
+  };
 
   return {
     title,
@@ -41,13 +49,13 @@ export function postMetadata(post: Post): Metadata {
       modifiedTime: post.updatedAt,
       authors: [SITE.url],
       tags: post.tags,
-      images: [{ url: image, alt: post.title }],
+      images: [imageMetadata],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [{ url: image, alt: post.title }],
+      images: [{ url: image, alt: imageAlt }],
     },
   };
 }
@@ -55,6 +63,15 @@ export function postMetadata(post: Post): Metadata {
 export function postJsonLd(post: Post) {
   const url = absoluteUrl(postPath(post.slug));
   const image = absoluteUrl(post.coverImage ?? "/og-dossier.png");
+  const imageObject = {
+    "@type": "ImageObject",
+    url: image,
+    contentUrl: image,
+    caption: post.coverImageAlt ?? post.title,
+    ...(post.coverImageWidth && post.coverImageHeight
+      ? { width: post.coverImageWidth, height: post.coverImageHeight }
+      : {}),
+  };
 
   return {
     "@context": "https://schema.org",
@@ -62,15 +79,24 @@ export function postJsonLd(post: Post) {
       {
         "@type": "Article",
         "@id": `${url}#article`,
+        url,
         headline: post.title,
         description: post.seoDescription ?? post.description,
-        image: [image],
+        image: imageObject,
         datePublished: post.publishedAt,
         dateModified: post.updatedAt,
         wordCount: post.wordCount,
         inLanguage: SITE.language,
         keywords: post.tags.join(", "),
+        articleSection: post.category,
+        about: post.tags.map((tag) => ({ "@type": "Thing", name: tag })),
         author: {
+          "@type": "Person",
+          name: SITE.name,
+          url: SITE.url,
+          sameAs: [SITE.github],
+        },
+        publisher: {
           "@type": "Person",
           name: SITE.name,
           url: SITE.url,

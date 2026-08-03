@@ -21,18 +21,60 @@ export const selectedSystems = [
 
 export const advisories = [
   {
-    id: "CVE-2025-45691",
-    project: "RAGAS",
-    finding: "ARBITRARY FILE READ",
-    status: "PUBLIC",
-    href: "https://github.com/advisories/GHSA-v2xr-wvrv-p969",
+    id: "GHSA-mcfc-hp25-cjv7",
+    project: "HERMES AGENT",
+    finding: "UNAUTHENTICATED PLUGIN CODE EXECUTION",
+    status: "PUBLIC REPORT",
+    href: "https://github.com/NousResearch/hermes-agent/issues/46435",
+  },
+  {
+    id: "GHSA-7x7g-w3q4-fv98",
+    project: "PROMPTFOO",
+    finding: "SECOND-ORDER TEMPLATE INJECTION TO RCE",
+    status: "PUBLIC FIX",
+    href: "https://github.com/promptfoo/promptfoo/pull/9693",
+  },
+  {
+    id: "GHSA-f5hv-jrwp-gh59",
+    project: "PROMPTFOO",
+    finding: "STORED OUTPUT DYNAMIC IMPORT RCE",
+    status: "PUBLIC FIX",
+    href: "https://github.com/promptfoo/promptfoo/pull/9693",
+  },
+  {
+    id: "GHSA-rxqh-5572-8m77",
+    project: "HERMES AGENT",
+    finding: "EMAIL GATEWAY AUTHORIZATION BYPASS",
+    status: "PUBLIC REPORT",
+    href: "https://github.com/NousResearch/hermes-agent/issues/46434",
   },
   {
     id: "CVE-2026-41914",
     project: "OPENCLAW",
     finding: "SERVER-SIDE REQUEST FORGERY",
-    status: "PUBLIC",
+    status: "CVE / GHSA",
     href: "https://github.com/advisories/GHSA-3fv3-6p2v-gxwj",
+  },
+  {
+    id: "CVE-2025-45691",
+    project: "RAGAS",
+    finding: "ARBITRARY FILE READ",
+    status: "CVE / GHSA",
+    href: "https://github.com/advisories/GHSA-v2xr-wvrv-p969",
+  },
+  {
+    id: "CVE-2019-7564",
+    project: "COSHIP ROUTER",
+    finding: "UNAUTHENTICATED WI-FI PASSWORD RESET",
+    status: "NVD RECORD",
+    href: "https://nvd.nist.gov/vuln/detail/CVE-2019-7564",
+  },
+  {
+    id: "CVE-2019-6441",
+    project: "COSHIP ROUTER",
+    finding: "UNAUTHENTICATED ADMIN CREDENTIAL RESET",
+    status: "NVD RECORD",
+    href: "https://nvd.nist.gov/vuln/detail/CVE-2019-6441",
   },
 ];
 

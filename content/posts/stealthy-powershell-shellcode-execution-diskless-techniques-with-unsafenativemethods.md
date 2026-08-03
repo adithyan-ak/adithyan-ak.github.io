@@ -14,6 +14,9 @@ tags:
   - "In-Memory Execution"
   - "Offensive Security"
 coverImage: "/images/posts/powershell-unsafenativemethods-cover.webp"
+coverImageAlt: "Dark technical illustration of PowerShell resolving Windows APIs for in-memory execution"
+coverImageWidth: 1792
+coverImageHeight: 1024
 status: "Published"
 draft: false
 ---

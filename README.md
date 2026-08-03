@@ -40,7 +40,9 @@ same frontmatter. There is no second metadata file to keep synchronized.
 | `file` | Two-digit dossier identifier |
 | `publishedAt` / `updatedAt` | ISO 8601 timestamps |
 | `category` / `tags` | Archive, feed, and article taxonomy |
-| `coverImage` | Local social-preview image path |
+| `coverImage` | Local article hero and social-preview image path |
+| `coverImageAlt` | Descriptive alternative text for the hero and social image |
+| `coverImageWidth` / `coverImageHeight` | Intrinsic pixel dimensions used to prevent layout shift |
 | `status` | `Published` |
 | `draft` | `true` keeps the post out of all generated routes |
 

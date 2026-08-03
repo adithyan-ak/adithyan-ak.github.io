@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { formatDateLabel, getAllPosts, getPostBySlug } from "@/lib/posts";
@@ -35,8 +36,6 @@ export default async function DossierFieldNote({
   if (!post) notFound();
 
   const nextPost = posts[(postIndex + 1) % posts.length];
-  const contents = post.tableOfContents.filter((item) => item.depth === 2);
-  const wasUpdated = post.updatedAt !== post.publishedAt;
 
   return (
     <div className={styles.scene}>
@@ -46,7 +45,7 @@ export default async function DossierFieldNote({
 
       <header className={`${styles.utility} ${styles.articleUtility}`}>
         <p>
-          FN–{post.file} <span aria-hidden="true">/</span> Declassified
+          FN–{post.file} <span aria-hidden="true">/</span> Field note
         </p>
         <Link href="/blog">
           <span className={styles.desktopLabel}>Field note </span>index ↗
@@ -72,16 +71,29 @@ export default async function DossierFieldNote({
                 <span>Filed</span> {post.dateLabel}
               </p>
               <p>
-                <span>Status</span> {post.status}
+                <span>Revised</span> {formatDateLabel(post.updatedAt)}
               </p>
               <p>
                 <span>Read</span> {post.readingMinutes} min
               </p>
             </div>
 
-            <p className={styles.kicker}>Declassified field note</p>
+            <p className={styles.kicker}>Independent research field note</p>
             <h1>{post.title}</h1>
             <p className={styles.articleDeck}>{post.deck}</p>
+
+            {post.coverImage ? (
+              <figure className={styles.articleCover}>
+                <Image
+                  src={post.coverImage}
+                  alt={post.coverImageAlt ?? post.title}
+                  width={post.coverImageWidth ?? 1600}
+                  height={post.coverImageHeight ?? 900}
+                  priority
+                  fetchPriority="high"
+                />
+              </figure>
+            ) : null}
 
             <div className={styles.byline}>
               <p>
@@ -90,52 +102,17 @@ export default async function DossierFieldNote({
               <p>
                 <span>Discipline</span> {post.category}
               </p>
-              <div className={styles.declassifiedStamp} aria-hidden="true">
-                Declassified
+              <div className={styles.topicBlock}>
+                <ul className={styles.tagList} aria-label="Topics">
+                  {post.tags.map((tag) => (
+                    <li key={tag}>{tag}</li>
+                  ))}
+                </ul>
               </div>
             </div>
           </header>
 
-          <div className={styles.articleGrid}>
-            <aside className={styles.marginFile} aria-label="File contents">
-              <p>Contents</p>
-              <ol>
-                {contents.map((item) => (
-                  <li key={item.id}>
-                    <a href={`#${item.id}`}>
-                      <span>{item.index}</span>
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ol>
-              <dl>
-                <div>
-                  <dt>File</dt>
-                  <dd>AK–FN–{post.file}</dd>
-                </div>
-                <div>
-                  <dt>Words</dt>
-                  <dd>{post.wordCount.toLocaleString("en-US")}</dd>
-                </div>
-                {wasUpdated ? (
-                  <div>
-                    <dt>Revised</dt>
-                    <dd>{formatDateLabel(post.updatedAt)}</dd>
-                  </div>
-                ) : null}
-                <div>
-                  <dt>Distribution</dt>
-                  <dd>Public</dd>
-                </div>
-              </dl>
-              <ul className={styles.tagList} aria-label="Topics">
-                {post.tags.map((tag) => (
-                  <li key={tag}>{tag}</li>
-                ))}
-              </ul>
-            </aside>
-
+          <div className={styles.articleBody}>
             <div
               className={styles.prose}
               dangerouslySetInnerHTML={{ __html: post.html }}
