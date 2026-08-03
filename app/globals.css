@@ -1,0 +1,36 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: #17130f;
+  color-scheme: dark;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: #17130f;
+  font-family: var(--font-body), Georgia, serif;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

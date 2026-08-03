@@ -1,0 +1,1108 @@
+.scene {
+  --dossier-ink: #1f1a15;
+  --dossier-muted: #6f6253;
+  --dossier-paper: #eadfc8;
+  --dossier-paper-deep: #d8c8a9;
+  --dossier-red: #a5261c;
+  --dossier-rule: rgba(64, 48, 35, 0.34);
+  min-height: 100vh;
+  overflow-x: clip;
+  padding: 0 24px 64px;
+  color: var(--dossier-ink);
+  background:
+    radial-gradient(circle at 12% 5%, rgba(139, 93, 54, 0.14), transparent 30rem),
+    #17130f;
+  font-family: var(--font-body), Georgia, serif;
+}
+
+.scene ::selection {
+  color: #fff8e9;
+  background: var(--dossier-red);
+}
+
+.skipLink {
+  position: fixed;
+  z-index: 20;
+  top: 12px;
+  left: 12px;
+  padding: 8px 12px;
+  color: var(--dossier-paper);
+  background: var(--dossier-ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.72rem;
+  transform: translateY(-160%);
+}
+
+.skipLink:focus {
+  transform: translateY(0);
+}
+
+.utility {
+  display: grid;
+  width: min(1120px, 100%);
+  min-height: 58px;
+  margin-inline: auto;
+  padding-top: 29px;
+  padding-left: 250px;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  color: #bcae96;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.utility a,
+.contact a,
+.systemCard a,
+.ledgerRow,
+.note a,
+.dossierFooter a {
+  transition:
+    color 150ms ease,
+    background 150ms ease;
+}
+
+.utility a:hover,
+.utility a:focus-visible {
+  color: #f2e6cf;
+}
+
+.utility p {
+  display: flex;
+  margin: 0;
+  gap: 0.65rem;
+}
+
+.utility p span {
+  color: #6b5f50;
+}
+
+.frame {
+  width: min(1120px, 100%);
+  margin-inline: auto;
+}
+
+.paper {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(38px, 5vw, 70px) clamp(28px, 6vw, 76px) 34px;
+  border: 1px solid #928269;
+  box-shadow:
+    0 1px 0 #3a2f25,
+    0 18px 70px rgba(0, 0, 0, 0.44);
+  background:
+    linear-gradient(92deg, rgba(75, 48, 28, 0.03), transparent 12%, transparent 87%, rgba(75, 48, 28, 0.045)),
+    repeating-linear-gradient(0deg, rgba(64, 45, 28, 0.018) 0 1px, transparent 1px 4px),
+    var(--dossier-paper);
+}
+
+.paper::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  opacity: 0.28;
+  background:
+    radial-gradient(circle at 19% 11%, rgba(255, 252, 230, 0.75) 0 1px, transparent 2px),
+    radial-gradient(circle at 74% 66%, rgba(66, 39, 23, 0.16) 0 1px, transparent 1.5px);
+  background-size: 17px 19px, 23px 29px;
+  mix-blend-mode: multiply;
+}
+
+.paper::after {
+  position: absolute;
+  z-index: -1;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  content: "";
+  border-width: 0 0 35px 35px;
+  border-style: solid;
+  border-color: transparent transparent #bcaa88 transparent;
+  filter: drop-shadow(-2px -2px 2px rgba(45, 31, 21, 0.14));
+}
+
+.folderTab {
+  position: absolute;
+  top: -29px;
+  left: -1px;
+  min-width: 230px;
+  height: 29px;
+  padding: 7px 18px 0;
+  border: 1px solid #928269;
+  border-bottom: 0;
+  color: #44392e;
+  background: var(--dossier-paper-deep);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.masthead {
+  padding-bottom: 30px;
+  border-bottom: 3px double var(--dossier-ink);
+}
+
+.filingLine {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--dossier-rule);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.61rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.filingLine p {
+  margin: 0;
+}
+
+.filingLine span {
+  margin-right: 0.55rem;
+  color: var(--dossier-red);
+  font-weight: 600;
+}
+
+.identityGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.42fr) minmax(260px, 0.58fr);
+  gap: clamp(30px, 5vw, 64px);
+  padding-top: 34px;
+}
+
+.kicker,
+.recordLabel,
+.sectionHeading,
+.contact,
+.roleLine,
+.briefBlock > span,
+.profileHeader,
+.profileFooter,
+.profileCard dt,
+.profileCard dd,
+.systemCard ul,
+.systemCard a,
+.ledger,
+.note > div,
+.note > p:first-of-type,
+.note small,
+.serviceList,
+.capabilityList,
+.references li span,
+.talks,
+.dossierFooter {
+  font-family: var(--font-mono), monospace;
+}
+
+.kicker {
+  margin: 0 0 14px;
+  color: var(--dossier-red);
+  font-size: 0.67rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.identityGrid h1 {
+  max-width: 620px;
+  margin: 0;
+  font-size: clamp(3.2rem, 6.2vw, 5.25rem);
+  font-weight: 600;
+  letter-spacing: -0.058em;
+  line-height: 0.88;
+}
+
+.identityGrid h1 span {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+}
+
+.identityGrid h1 span:last-child {
+  white-space: nowrap;
+}
+
+.roleLine {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  margin-top: 30px;
+  padding: 10px 0;
+  border-block: 1px solid var(--dossier-ink);
+  align-items: baseline;
+  gap: 14px;
+}
+
+.roleLine > span,
+.briefBlock > span {
+  color: var(--dossier-muted);
+  font-size: 0.54rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.roleLine h2 {
+  margin: 0;
+  color: var(--dossier-red);
+  font-size: clamp(0.68rem, 1.1vw, 0.84rem);
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  line-height: 1.3;
+  text-transform: uppercase;
+}
+
+.briefBlock {
+  display: grid;
+  grid-template-columns: 118px minmax(0, 1fr);
+  padding-top: 18px;
+  gap: 14px;
+}
+
+.abstract {
+  max-width: 560px;
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.48;
+}
+
+.contact {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 22px;
+  border-top: 1px solid var(--dossier-ink);
+  border-left: 1px solid var(--dossier-ink);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.contact a {
+  padding: 9px 10px;
+  border-right: 1px solid var(--dossier-ink);
+  border-bottom: 1px solid var(--dossier-ink);
+  white-space: nowrap;
+}
+
+.contact a span {
+  margin-right: 7px;
+  color: var(--dossier-red);
+  font-size: 0.48rem;
+}
+
+.contact a:hover,
+.contact a:focus-visible {
+  color: var(--dossier-paper);
+  background: var(--dossier-ink);
+}
+
+.profileCard {
+  align-self: stretch;
+  padding: 18px 20px 15px;
+  border: 1px solid var(--dossier-rule);
+  background: rgba(223, 209, 181, 0.45);
+}
+
+.profileHeader {
+  display: flex;
+  min-height: 76px;
+  padding-bottom: 14px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--dossier-muted);
+  font-size: 0.53rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.clearanceStamp {
+  display: flex;
+  width: 128px;
+  min-height: 54px;
+  margin: 4px 0 0;
+  border: 3px double var(--dossier-red);
+  align-items: center;
+  justify-content: center;
+  color: var(--dossier-red);
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+  opacity: 0.88;
+}
+
+.clearanceStamp strong {
+  padding: 6px;
+  border-block: 1px solid currentColor;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.11em;
+}
+
+.profileCard dl {
+  margin: 0;
+}
+
+.profileCard dl > div {
+  padding: 10px 0;
+  border-top: 1px solid var(--dossier-rule);
+}
+
+.profileCard dt {
+  margin-bottom: 4px;
+  color: var(--dossier-red);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.profileCard dd {
+  margin: 0;
+  font-size: 0.66rem;
+  line-height: 1.5;
+}
+
+.profileFooter {
+  display: flex;
+  padding-top: 11px;
+  border-top: 1px solid var(--dossier-ink);
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--dossier-muted);
+  font-size: 0.5rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.redactionRule {
+  display: flex;
+  height: 32px;
+  align-items: center;
+  gap: 8px;
+}
+
+.redactionRule::before,
+.redactionRule::after {
+  height: 1px;
+  content: "";
+  background: var(--dossier-rule);
+}
+
+.redactionRule::before {
+  width: 44px;
+}
+
+.redactionRule::after {
+  flex: 1;
+}
+
+.redactionRule span,
+.redactionRule i {
+  display: block;
+  height: 5px;
+  background: var(--dossier-ink);
+}
+
+.redactionRule span {
+  width: 38px;
+}
+
+.redactionRule i {
+  width: 66px;
+}
+
+.section {
+  padding: 29px 0 34px;
+  border-bottom: 1px solid var(--dossier-rule);
+}
+
+.sectionHeading {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  margin-bottom: 22px;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.sectionHeading p,
+.sectionHeading h2,
+.sectionHeading span,
+.sectionHeading > a {
+  margin: 0;
+}
+
+.sectionHeading p,
+.sectionHeading span,
+.sectionHeading > a {
+  font-size: 0.59rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sectionHeading p {
+  color: var(--dossier-red);
+  font-weight: 600;
+}
+
+.sectionHeading h2 {
+  font-family: var(--font-body), Georgia, serif;
+  font-size: 1.55rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.sectionHeading span {
+  color: var(--dossier-muted);
+}
+
+.sectionHeading > a {
+  color: var(--dossier-muted);
+  font-family: var(--font-mono), monospace;
+  transition: color 140ms ease;
+}
+
+.sectionHeading > a:hover,
+.sectionHeading > a:focus-visible {
+  color: var(--dossier-red);
+}
+
+.systemGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.systemCard {
+  position: relative;
+  min-height: 265px;
+  padding: 22px;
+  border: 1px solid var(--dossier-ink);
+}
+
+.systemCard::after {
+  position: absolute;
+  top: -5px;
+  right: 20px;
+  width: 42px;
+  height: 8px;
+  content: "";
+  background: var(--dossier-paper);
+  border-inline: 1px solid var(--dossier-ink);
+}
+
+.recordLabel {
+  margin: 0 0 20px;
+  color: var(--dossier-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.07em;
+}
+
+.recordLabel span {
+  margin-right: 8px;
+  color: var(--dossier-red);
+}
+
+.systemCard h3 {
+  margin: 0 0 10px;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.systemCard > p:not(.recordLabel) {
+  max-width: 550px;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.systemCard ul {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 18px 0 28px;
+  padding: 0;
+  gap: 7px 14px;
+  list-style: none;
+  color: var(--dossier-muted);
+  font-size: 0.55rem;
+  letter-spacing: 0.06em;
+}
+
+.systemCard li::before {
+  margin-right: 6px;
+  color: var(--dossier-red);
+  content: "◆";
+  font-size: 0.42rem;
+}
+
+.systemCard a {
+  position: absolute;
+  bottom: 19px;
+  left: 22px;
+  border-bottom: 1px solid currentColor;
+  font-size: 0.63rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.systemCard a:hover,
+.systemCard a:focus-visible {
+  color: var(--dossier-red);
+}
+
+.ledger {
+  border-top: 1px solid var(--dossier-ink);
+}
+
+.ledgerRow {
+  display: grid;
+  grid-template-columns: 165px 105px minmax(0, 1fr) auto;
+  min-height: 48px;
+  padding: 11px 9px;
+  border-bottom: 1px solid var(--dossier-rule);
+  align-items: center;
+  gap: 15px;
+  font-size: 0.66rem;
+}
+
+.ledgerRow strong {
+  color: var(--dossier-red);
+}
+
+.ledgerRow p {
+  margin: 0;
+}
+
+.ledgerRow small {
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+}
+
+.ledgerRow:hover,
+.ledgerRow:focus-visible {
+  background: rgba(165, 38, 28, 0.07);
+}
+
+.notesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--dossier-ink);
+  border-left: 1px solid var(--dossier-rule);
+}
+
+.note {
+  min-height: 242px;
+  padding: 17px 16px;
+  border-right: 1px solid var(--dossier-rule);
+  border-bottom: 1px solid var(--dossier-rule);
+}
+
+.note > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--dossier-muted);
+  font-size: 0.53rem;
+}
+
+.note > div > span {
+  color: var(--dossier-red);
+  font-weight: 600;
+}
+
+.note > p:first-of-type {
+  margin: 24px 0 8px;
+  color: var(--dossier-red);
+  font-size: 0.53rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.note h3 {
+  margin: 0 0 8px;
+  font-size: 1.25rem;
+  line-height: 1.02;
+}
+
+.note h3 a:hover,
+.note h3 a:focus-visible {
+  color: var(--dossier-red);
+}
+
+.note h3 + p {
+  margin: 0 0 16px;
+  color: #40372e;
+  font-size: 0.84rem;
+  line-height: 1.35;
+}
+
+.note small {
+  color: var(--dossier-muted);
+  font-size: 0.5rem;
+}
+
+.archive {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--dossier-rule);
+}
+
+.archiveColumn {
+  min-width: 0;
+  padding: 29px 0 34px;
+}
+
+.archiveColumn:first-child {
+  padding-right: 28px;
+  border-right: 1px solid var(--dossier-rule);
+}
+
+.archiveColumn:last-child {
+  padding-left: 28px;
+}
+
+.archiveColumn .sectionHeading {
+  grid-template-columns: 82px minmax(0, 1fr);
+}
+
+.archiveColumn .sectionHeading > span {
+  display: none;
+}
+
+.serviceList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.serviceList > li {
+  border-top: 1px solid var(--dossier-rule);
+  list-style: none;
+}
+
+.serviceList details {
+  padding: 0;
+}
+
+.serviceList summary {
+  display: grid;
+  grid-template-columns: 86px minmax(0, 1fr) 20px;
+  padding: 11px 0;
+  align-items: start;
+  gap: 14px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.serviceList summary::-webkit-details-marker {
+  display: none;
+}
+
+.serviceList summary:hover strong,
+.serviceList summary:focus-visible strong {
+  color: var(--dossier-red);
+}
+
+.serviceList summary:focus-visible {
+  outline: 2px solid var(--dossier-red);
+  outline-offset: 3px;
+}
+
+.serviceList time {
+  color: var(--dossier-red);
+  font-size: 0.56rem;
+}
+
+.serviceIdentity strong,
+.serviceIdentity > span {
+  display: block;
+  font-size: 0.61rem;
+}
+
+.serviceIdentity > span {
+  margin-top: 3px;
+  color: var(--dossier-muted);
+  font-size: 0.56rem;
+}
+
+.disclosureIcon {
+  color: var(--dossier-red);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.85rem;
+  line-height: 1;
+  transition: transform 150ms ease;
+}
+
+.serviceList details[open] .disclosureIcon {
+  transform: rotate(45deg);
+}
+
+.serviceList details > ul {
+  margin: 0 0 14px 100px;
+  padding: 0 0 0 14px;
+  border-left: 2px solid rgba(165, 38, 28, 0.35);
+  list-style: none;
+}
+
+.serviceList details > ul li {
+  position: relative;
+  margin-top: 8px;
+  color: #40372e;
+  font-family: var(--font-body), Georgia, serif;
+  font-size: 0.78rem;
+  line-height: 1.42;
+}
+
+.serviceList details > ul li::before {
+  position: absolute;
+  top: 0.55em;
+  left: -15px;
+  width: 6px;
+  height: 3px;
+  content: "";
+  background: var(--dossier-red);
+}
+
+.capabilityList {
+  margin: 0;
+}
+
+.capabilityList > div {
+  padding: 9px 0;
+  border-top: 1px solid var(--dossier-rule);
+}
+
+.capabilityList dt {
+  color: var(--dossier-red);
+  font-size: 0.56rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+}
+
+.capabilityList dd {
+  margin: 4px 0 0;
+  color: #40372e;
+  font-size: 0.55rem;
+  line-height: 1.55;
+}
+
+.references {
+  padding: 29px 0 34px;
+}
+
+.referenceGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 0.7fr;
+  gap: 44px;
+}
+
+.referenceGrid ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.referenceGrid li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  padding: 8px 0;
+  border-top: 1px solid var(--dossier-rule);
+  gap: 12px;
+  font-size: 0.91rem;
+  line-height: 1.25;
+}
+
+.referenceGrid li span {
+  color: var(--dossier-red);
+  font-size: 0.54rem;
+}
+
+.talks {
+  border-top: 1px solid var(--dossier-ink);
+}
+
+.talks article {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--dossier-rule);
+}
+
+.talks span {
+  color: var(--dossier-red);
+  font-size: 0.53rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+}
+
+.talks h3 {
+  margin: 6px 0 3px;
+  font-family: var(--font-body), Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.talks p {
+  margin: 0;
+  color: var(--dossier-muted);
+  font-size: 0.52rem;
+}
+
+.dossierFooter {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  padding-top: 24px;
+  align-items: center;
+  gap: 24px;
+  color: var(--dossier-muted);
+  font-size: 0.57rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.dossierFooter p {
+  margin: 0;
+}
+
+.dossierFooter strong {
+  color: var(--dossier-ink);
+}
+
+.dossierFooter > div {
+  display: flex;
+  gap: 4px;
+}
+
+.dossierFooter > div span {
+  display: block;
+  width: 19px;
+  height: 6px;
+  background: var(--dossier-ink);
+}
+
+.dossierFooter a {
+  border-bottom: 1px solid currentColor;
+}
+
+.dossierFooter a:hover,
+.dossierFooter a:focus-visible {
+  color: var(--dossier-red);
+}
+
+.scene a:focus-visible {
+  outline: 2px solid var(--dossier-red);
+  outline-offset: 3px;
+}
+
+.notFoundScene {
+  padding-top: 82px;
+}
+
+.notFoundPaper {
+  display: grid;
+  min-height: min(680px, calc(100vh - 150px));
+  place-items: center;
+}
+
+.errorFile {
+  width: min(720px, 100%);
+  padding-block: 30px;
+}
+
+.errorFile h1 {
+  max-width: 680px;
+  margin: 0;
+  font-size: clamp(3.2rem, 8vw, 6rem);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 0.88;
+}
+
+.errorFile > p:not(.kicker) {
+  max-width: 520px;
+  margin: 24px 0 0;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.errorLink {
+  display: inline-block;
+  margin-top: 28px;
+  padding: 8px 11px;
+  border: 1px solid var(--dossier-ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.errorLink:hover,
+.errorLink:focus-visible {
+  color: var(--dossier-paper);
+  background: var(--dossier-ink);
+}
+
+@media (max-width: 900px) {
+  .utility {
+    padding-left: 250px;
+  }
+
+  .identityGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .profileCard {
+    display: block;
+  }
+
+  .notesGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ledgerRow {
+    grid-template-columns: 150px 90px minmax(0, 1fr);
+  }
+
+  .ledgerRow small {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .scene {
+    padding: 0 12px 34px;
+  }
+
+  .utility {
+    min-height: 48px;
+    padding-top: 19px;
+    padding-left: 204px;
+    grid-template-columns: 1fr;
+    justify-items: end;
+  }
+
+  .utility p {
+    display: none;
+  }
+
+  .paper {
+    padding: 34px 20px 25px;
+  }
+
+  .folderTab {
+    min-width: 190px;
+  }
+
+  .filingLine {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .identityGrid {
+    padding-top: 28px;
+  }
+
+  .identityGrid h1 {
+    font-size: clamp(2.8rem, 13.2vw, 4.1rem);
+  }
+
+  .roleLine,
+  .briefBlock {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .contact {
+    font-size: 0.52rem;
+  }
+
+  .contact a {
+    padding-inline: 7px;
+  }
+
+  .sectionHeading {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+
+  .sectionHeading > span {
+    display: none;
+  }
+
+  .sectionHeading > a {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  .systemGrid,
+  .notesGrid,
+  .archive,
+  .referenceGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .systemCard {
+    min-height: 0;
+    padding-bottom: 62px;
+  }
+
+  .note {
+    min-height: 210px;
+  }
+
+  .ledgerRow {
+    grid-template-columns: 1fr auto;
+    gap: 4px 12px;
+  }
+
+  .ledgerRow p {
+    grid-column: 1 / -1;
+  }
+
+  .archiveColumn:first-child,
+  .archiveColumn:last-child {
+    padding-inline: 0;
+    border-right: 0;
+  }
+
+  .archiveColumn:first-child {
+    border-bottom: 1px solid var(--dossier-rule);
+  }
+
+  .serviceList summary {
+    grid-template-columns: 75px minmax(0, 1fr) 18px;
+    gap: 10px;
+  }
+
+  .serviceList details > ul {
+    margin-left: 85px;
+  }
+
+  .dossierFooter {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .dossierFooter > div {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .utility a,
+  .contact a,
+  .systemCard a,
+  .ledgerRow,
+  .note a,
+  .dossierFooter a {
+    transition: none;
+  }
+}
