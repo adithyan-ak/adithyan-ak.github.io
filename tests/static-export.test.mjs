@@ -19,6 +19,15 @@ function exported(path) {
 test("exports the canonical declassified dossier", () => {
   const html = exported("index.html");
 
+  assert.match(html, /<title>Adithyan Arun Kumar<\/title>/);
+  assert.match(
+    html,
+    /<meta property="og:title" content="Adithyan Arun Kumar"/,
+  );
+  assert.match(
+    html,
+    /<meta name="twitter:title" content="Adithyan Arun Kumar"/,
+  );
   assert.match(html, /Adithyan Arun Kumar/);
   assert.match(html, /Agentic Security Researcher/i);
   assert.match(html, /AgentHound/);
@@ -33,6 +42,7 @@ test("exports the canonical declassified dossier", () => {
   assert.match(html, /<link rel="icon" href="\/icon\.svg\?[^\"]+"/);
   assert.match(html, /Service record/i);
   assert.match(html, /Context-Level Secret Isolation/i);
+  assert.doesNotMatch(html, /[—–]/);
   assert.doesNotMatch(
     html,
     /Operator Console|Signal Index|Blacksite Blueprint|Security Bulletin/i,
@@ -42,8 +52,18 @@ test("exports the canonical declassified dossier", () => {
 test("exports the field-note index with root-level article links", () => {
   const html = exported("blog/index.html");
 
+  assert.match(html, /<title>Adithyan Arun Kumar<\/title>/);
+  assert.match(
+    html,
+    /<meta property="og:title" content="Adithyan Arun Kumar"/,
+  );
+  assert.match(
+    html,
+    /<meta name="twitter:title" content="Adithyan Arun Kumar"/,
+  );
   assert.match(html, /Field Notes/i);
   assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?07/);
+  assert.doesNotMatch(html, /[—–]/);
   for (const slug of posts) {
     assert.match(html, new RegExp(`href="/${slug}/"`));
     assert.doesNotMatch(html, new RegExp(`href="/blog/${slug}`));
@@ -68,7 +88,7 @@ test("every article has inherited SEO, structured data, and rendered Markdown", 
     assert.match(html, /<meta property="article:published_time"/);
     assert.match(
       html,
-      /<link rel="alternate" type="application\/rss\+xml" href="https:\/\/adithyanak\.com\/rss\.xml" title="Adithyan Arun Kumar — Field Notes"/,
+      /<link rel="alternate" type="application\/rss\+xml" href="https:\/\/adithyanak\.com\/rss\.xml" title="Adithyan Arun Kumar Field Notes"/,
     );
     assert.match(html, /"@type":"Article"/);
     assert.match(html, /"@type":"ImageObject"/);
@@ -76,6 +96,7 @@ test("every article has inherited SEO, structured data, and rendered Markdown", 
     assert.match(html, /class="[^"]*prose[^"]*"/);
     assert.match(html, /<figure class="[^"]*articleCover[^"]*"/);
     assert.match(html, /<h2 id="[^"]+" data-section="01">/);
+    assert.doesNotMatch(html, /[—–]/);
     assert.doesNotMatch(html, /Declassified field note|>Declassified<|\/ Declassified/);
     assert.doesNotMatch(html, /<span>Status<\/span>\s*(?:<!-- -->)?Published/);
   }
@@ -133,12 +154,12 @@ test("exports the AgentHound research series with evidence and internal links", 
     "mcp-tool-poisoning-detect-reverse-agenthound/index.html",
   );
 
-  assert.match(tutorial, /24 of 24 planned scenarios passing/i);
+  assert.match(tutorial, /one autonomous scan/i);
   assert.match(tutorial, /agenthound-dashboard-attack-surface\.png/);
-  assert.match(promptInjection, /deterministic regression fixture/i);
+  assert.match(promptInjection, /POISONED_INSTRUCTIONS/);
   assert.match(promptInjection, /agenthound-poisoning-data-flow-graph\.png/);
-  assert.match(poisoning, /standalone target-mutation validation/i);
-  assert.match(poisoning, /&quot;mutated&quot;/);
+  assert.match(poisoning, /mcp\.description\.roundtrip/);
+  assert.match(poisoning, /mutation_observed_restored/);
 
   assert.match(
     tutorial,

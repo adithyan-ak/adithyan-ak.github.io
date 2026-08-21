@@ -4,7 +4,7 @@ export const selectedSystems = [
     name: "AgentHound",
     label: "FLAGSHIP / OPEN SOURCE",
     description:
-      "Offensive security for AI agent infrastructure. Discover the stack, validate exposure, and connect isolated weaknesses into complete attack paths.",
+      "AgentHound maps AI agent infrastructure from a foothold and tests which credentials, services, and tools form usable attack paths.",
     meta: ["GO", "MCP", "A2A", "ATTACK-PATH ANALYSIS"],
     href: "https://github.com/adithyan-ak/AgentHound",
   },
@@ -13,7 +13,7 @@ export const selectedSystems = [
     name: "AgentMask",
     label: "OPEN SOURCE / DEFENSIVE CONTROL",
     description:
-      "Context-level secret isolation for AI coding agents, enforced where tools, files, and model context meet.",
+      "AgentMask intercepts coding-agent tool calls and returns redacted files before secrets can enter model context.",
     meta: ["TYPESCRIPT", "MCP", "CONTEXT SECURITY"],
     href: "https://github.com/adithyan-ak/AgentMask",
   },
@@ -80,14 +80,14 @@ export const advisories = [
 
 export const experience = [
   {
-    period: "2023—NOW",
+    period: "2023 TO PRESENT",
     organization: "SALESFORCE",
-    role: "SENIOR SECURITY ENGINEER — AI",
+    role: "SENIOR SECURITY ENGINEER, AI",
     responsibilities: [
       "Lead threat modeling, secure design reviews, and adversarial testing for AI components across the Agentforce ecosystem.",
       "Review MCP and A2A implementations and define safer inter-agent communication patterns across product lines.",
       "Red-team production AI systems across prompt injection, jailbreak, data poisoning, and model-evasion scenarios.",
-      "Drive remediation across bug-bounty findings and third-party Data Cloud integrations.",
+      "Coordinate remediation for bug-bounty findings and third-party Data Cloud integrations.",
     ],
   },
   {
@@ -109,12 +109,12 @@ export const experience = [
     ],
   },
   {
-    period: "2020—2021",
+    period: "2020 TO 2021",
     organization: "PRIMEFORT",
     role: "OFFENSIVE SECURITY ENGINEER",
     responsibilities: [
       "Executed web, mobile, network, social-engineering, and red-team assessments across more than 20 client engagements.",
-      "Built offensive tooling and reusable methodologies that reduced assessment delivery time by 25 percent.",
+      "Built offensive tooling that reduced assessment delivery time by 25 percent.",
     ],
   },
 ];

@@ -1,7 +1,7 @@
 ---
 title: "Descriptive human-readable title"
 seoTitle: "Optional shorter search title"
-description: "One concrete sentence for search results and link previews. Aim for 140–160 characters."
+description: "One concrete sentence for search results and link previews. Aim for 140 to 160 characters."
 deck: "A readable one- or two-sentence abstract shown on the article and archive."
 slug: "lowercase-descriptive-slug"
 file: "05"

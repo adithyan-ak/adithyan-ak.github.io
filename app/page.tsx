@@ -14,7 +14,7 @@ import { postPath } from "@/lib/site";
 import styles from "./dossier.module.css";
 
 export const metadata: Metadata = {
-  title: "Declassified Dossier — Adithyan Arun Kumar",
+  title: "Adithyan Arun Kumar",
   description:
     "The public research dossier of agentic security researcher Adithyan Arun Kumar.",
   alternates: pageAlternates("/"),
@@ -31,7 +31,7 @@ export default function Home() {
 
       <header className={styles.utility}>
         <p>
-          File AK–AIS–2026 <span aria-hidden="true">/</span> Declassified
+          File AK-AIS-2026 <span aria-hidden="true">/</span> Declassified
         </p>
         <Link href="/blog">Field notes →</Link>
       </header>
@@ -43,7 +43,7 @@ export default function Home() {
           <header className={styles.masthead}>
             <div className={styles.filingLine}>
               <p>
-                <span>File</span> AK–AIS–2026
+                <span>File</span> AK-AIS-2026
               </p>
               <p>
                 <span>Status</span> Active / Public
@@ -68,8 +68,8 @@ export default function Home() {
                   <span>Research brief</span>
                   <p className={styles.abstract}>
                     I study how agents, protocols, tools, credentials, and
-                    runtimes combine into attack paths—then build open-source
-                    systems that make those paths visible and testable.
+                    runtimes combine into attack paths. I build open-source
+                    systems to make those paths visible and testable.
                   </p>
                 </div>
                 <nav className={styles.contact} aria-label="Contact links">
@@ -99,7 +99,7 @@ export default function Home() {
                 <dl>
                   <div>
                     <dt>Current post</dt>
-                    <dd>Senior Security Engineer — AI, Salesforce</dd>
+                    <dd>Senior Security Engineer, AI, Salesforce</dd>
                   </div>
                   <div>
                     <dt>Education</dt>
@@ -111,7 +111,7 @@ export default function Home() {
                   </div>
                 </dl>
                 <div className={styles.profileFooter}>
-                  <span>AK–AIS–2026</span>
+                  <span>AK-AIS-2026</span>
                   <span>Active / public</span>
                 </div>
               </aside>
@@ -193,7 +193,7 @@ export default function Home() {
               {posts.map((post) => (
                 <article className={styles.note} key={post.slug}>
                   <div>
-                    <span>FN–{post.file}</span>
+                    <span>FN-{post.file}</span>
                     <time dateTime={post.publishedAt}>{post.dateLabel}</time>
                   </div>
                   <p>{post.category}</p>

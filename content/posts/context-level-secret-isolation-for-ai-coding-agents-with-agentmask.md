@@ -6,7 +6,7 @@ deck: "A practical architecture for keeping credentials outside AI coding-agent 
 slug: "context-level-secret-isolation-for-ai-coding-agents-with-agentmask"
 file: "01"
 publishedAt: "2026-04-06T19:41:20.418Z"
-updatedAt: "2026-08-02T00:00:00.000Z"
+updatedAt: "2026-08-20T16:00:00.000Z"
 category: "Agent Security"
 tags:
   - "Agentmask"
@@ -20,34 +20,31 @@ coverImageHeight: 1024
 status: "Published"
 draft: false
 ---
-Once a secret enters the agent's context window, the attack surface is wide open:
+Once a secret enters the agent's context window, several things can expose it:
 
-*   **Prompt injection via external tools** - a compromised MCP server, a malicious package README, or a crafted API response can instruct the agent to exfiltrate secrets it has already read
+* A compromised MCP server, malicious package README, or crafted API response can instruct the agent to disclose secrets it has already read.
 
-*   **Tool call leakage** - the agent references a secret in a Write, Edit, or Bash call. It ends up in source code, a commit message, or piped to stdout
+* The agent can place a secret in a Write, Edit, or Bash call, which may leave it in source code, a commit message, or stdout.
 
-*   **Context persistence** - secrets in context can be echoed back in any subsequent response, fed into web searches, or included in error reports the agent generates
+* Later responses, web searches, or generated error reports can repeat a secret that remains in context.
 
-*   **Indirect exfiltration** - an injected prompt tells the agent to make an HTTP request, post to a webhook, or write secrets to a file that gets synced elsewhere
+* An injected prompt can ask the agent to send an HTTP request, post to a webhook, or write the value to a synced file.
 
-
-The root cause is the same in every case: **the secret was in context to begin with.** Block it from entering context and every downstream vector disappears.
-
-[Agentmask](https://github.com/adithyan-ak/agentmask) does exactly that.
+These paths all depend on the agent seeing the secret. [Agentmask](https://github.com/adithyan-ak/agentmask) blocks it before that happens.
 
 ![Agentmask blocking and redacting secrets during an AI coding-agent workflow](/images/posts/agentmask-demo.gif)
 
-## What It Is
+## How it works
 
-[Agentmask](https://github.com/adithyan-ak/agentmask) is a secrets firewall for AI coding agents. It hooks into Claude Code's tool execution pipeline and blocks secrets before they reach the context window. Three reinforcing layers:
+[Agentmask](https://github.com/adithyan-ak/agentmask) is a secrets firewall for AI coding agents. It hooks into Claude Code's tool execution pipeline and uses three layers:
 
-**Block** - PreToolUse hooks intercept every Read, Write, Bash, and Edit call. Files in the blocklist or matching static patterns (`.env`, `*.pem`, `id_rsa`, etc.) are rejected in under 5ms. Content being written is scanned for secrets in ~200ms.
+* PreToolUse hooks intercept Read, Write, Bash, and Edit calls. They reject files on the blocklist or matching static patterns such as `.env`, `*.pem`, and `id_rsa` in under 5 ms. They scan content being written in about 200 ms.
 
-**Redirect** - When a read is blocked, the agent is directed to MCP tools that return redacted content. The agent keeps working — it just never sees the raw values.
+* A blocked read directs the agent to MCP tools that return redacted content, so it can continue without the raw values.
 
-**Instruct** - Behavioral rules in `.claude/rules/agentmask.md` tell the agent to prefer safe tools and never output secret values.
+* Rules in `.claude/rules/agentmask.md` tell the agent to prefer the safe tools and avoid printing secret values.
 
-Any single layer can fail. All three failing simultaneously on the same secret is unlikely.
+The layers cover different failure points. A hook blocks the operation, the MCP tool supplies usable redacted data, and the rules steer the agent toward that route.
 
 ![Agentmask intercepting a blocked secret file read](/images/posts/agentmask-read-blocked.png)
 
@@ -59,13 +56,13 @@ cd your-project
 agentmask init
 ```
 
-`init` scans your repo with [gitleaks](https://github.com/gitleaks/gitleaks) (150+ provider-specific rules) plus agentmask's own scanner (password fields, connection strings, webhook secrets). Every file containing a detected secret goes into a blocklist. Hooks, MCP server, and behavioral rules are installed automatically.
+`init` scans the repository with [gitleaks](https://github.com/gitleaks/gitleaks), which has more than 150 provider-specific rules, and Agentmask's scanner for password fields, connection strings, and webhook secrets. It adds files containing detected secrets to the blocklist, then installs the hooks, MCP server, and behavioral rules.
 
 ![Agentmask returning a redacted view of a secret-bearing file](/images/posts/agentmask-redacted-read.png)
 
-That's the entire setup. No config files to write, no CI to configure, no workflow changes.
+The default setup does not require a hand-written configuration file or CI changes.
 
-## How the Hooks Work
+## How the hooks work
 
 Four hooks run on every tool call:
 
@@ -76,11 +73,11 @@ Four hooks run on every tool call:
 | `pre-bash` | Bash | Filters commands + scans staged files on `git commit` | ~200ms |
 | `post-scan` | Read, Bash | Scans tool output, auto-blocklists new secret files | ~200ms |
 
-`pre-read` is the hot path, pure in-memory blocklist lookup, no subprocess, no scanning. The agent doesn't notice it.
+`pre-read` performs an in-memory blocklist lookup without starting a subprocess or scanning the file again.
 
 When a read is blocked, the agent receives an error message pointing it to `safe_read`. Claude Code follows the redirect automatically.
 
-## MCP Tools
+## MCP tools
 
 When the MCP server is running, the agent has four tools available:
 
@@ -102,25 +99,25 @@ DEBUG=true
 PORT=3000
 ```
 
-Non-secret values pass through. The agent can still reason about the file structure, reference variable names, and write code that uses `process.env.DATABASE_URL` — without ever seeing the actual connection string.
+Non-secret values pass through. The agent can still inspect the file structure, reference variable names, and write code that uses `process.env.DATABASE_URL` without seeing the connection string.
 
 ## Detection
 
-Two scanners run in parallel on every scan:
+Every scan runs two detectors in parallel.
 
-**gitleaks** — 150+ rules covering AWS, GitHub, Stripe, Google Cloud, OpenAI, Anthropic, Slack, Twilio, GitLab, JWTs, PEM keys, and a generic high-entropy rule for anything assigned to `key`/`token`/`secret`/`api`/`auth`/`client` variables. Auto-downloaded if not on your system.
+Gitleaks supplies more than 150 rules for AWS, GitHub, Stripe, Google Cloud, OpenAI, Anthropic, Slack, Twilio, GitLab, JWTs, and PEM keys. It also checks high-entropy values assigned to variables containing `key`, `token`, `secret`, `api`, `auth`, or `client`. Agentmask downloads gitleaks if it is not installed.
 
-**agentmask scanner** — TypeScript regex pass for patterns gitleaks deliberately excludes:
+Agentmask adds a TypeScript regex pass for patterns that gitleaks deliberately excludes:
 
-*   `password` / `passwd` / `pwd` field assignments
+* `password`, `passwd`, and `pwd` field assignments
 
-*   SQL `PASSWORD 'value'` statements
+* SQL `PASSWORD 'value'` statements
 
-*   Connection strings with embedded credentials (`postgres://`, `mysql://`, `mongodb://`, etc.)
+* Connection strings with embedded credentials, including `postgres://`, `mysql://`, and `mongodb://`
 
-*   `whsec_` webhook signing secrets
+* `whsec_` webhook signing secrets
 
-*   `GOCSPX-` Google OAuth client secrets
+* `GOCSPX-` Google OAuth client secrets
 
 
 Both scanners merge into a single findings list. Common placeholders (`changeme`, `${VAR}`, `<password>`) are skipped to keep false positives low.
@@ -149,16 +146,16 @@ For teams, use `agentmask init --team` to write hooks to `.claude/settings.json`
 
 ## Limitations
 
-*   **First read of a new secret file leaks.** Post-scan catches it and blocklists it for every subsequent read. Unavoidable without pre-reading every file.
+* The first read of a new secret file leaks. The post-scan hook catches it and blocks later reads. Preventing the first read would require scanning every file in advance.
 
-*   **Not every bash invocation is covered.** `cat .env` is caught. `node -e "require('fs').readFileSync('.env')"` is not.
+* Bash coverage is incomplete. `cat .env` is caught, but `node -e "require('fs').readFileSync('.env')"` is not.
 
-*   **Chat output isn't filtered.** Hooks cover tool calls, not the agent's text responses.
+* The hooks cover tool calls, not the agent's chat responses.
 
-*   **Graceful degradation.** If a hook crashes or hits the 4-second timeout, the operation proceeds. agentmask never blocks your work due to its own bugs.
+* If a hook crashes or reaches the four-second timeout, Agentmask allows the operation to proceed.
 
 
-## Commands Reference
+## Command reference
 
 ```bash
 agentmask init              # Scan, blocklist, install hooks + MCP + rules

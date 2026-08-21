@@ -1,6 +1,6 @@
 export const SITE = {
   name: "Adithyan Arun Kumar",
-  title: "Adithyan Arun Kumar — Agentic Security Researcher",
+  title: "Adithyan Arun Kumar",
   description:
     "Agentic security research, open-source systems, public advisories, and technical field notes by Adithyan Arun Kumar.",
   url: "https://adithyanak.com",

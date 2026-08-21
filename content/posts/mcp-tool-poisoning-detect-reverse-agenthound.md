@@ -1,11 +1,11 @@
 ---
-title: "MCP Tool Poisoning: How to Detect and Reverse It with AgentHound"
-description: "Detect suspicious MCP tool descriptions, map their reach to privileged tools, and safely validate a reversible ContextForge mutation with AgentHound."
-deck: "A tool-poisoning workflow should separate observation, graph analysis, authorized mutation, and verified recovery. This guide shows each boundary."
+title: "MCP Tool Poisoning: Detect and Safely Validate It with AgentHound"
+description: "Detect suspicious MCP tool descriptions, map their reach to privileged capabilities, and inspect AgentHound's reversible ContextForge validation."
+deck: "AgentHound separates suspicious metadata, shared agent context, reversible provider validation, and recovery into evidence you can audit from one scan artifact."
 slug: "mcp-tool-poisoning-detect-reverse-agenthound"
 file: "07"
 publishedAt: "2026-08-03T14:00:00.000Z"
-updatedAt: "2026-08-03T14:00:00.000Z"
+updatedAt: "2026-08-20T16:00:00.000Z"
 category: "Agentic Security Research"
 tags:
   - "MCP Security"
@@ -23,180 +23,175 @@ draft: false
 
 MCP tool descriptions are part of the model's decision surface. A description can explain when a tool should be used, what data it expects, and how its output should be interpreted. If that metadata contains hidden or adversarial instructions, it can steer the agent before any tool is invoked.
 
-Finding suspicious metadata is only the first step. A rigorous tool-poisoning assessment separates four claims:
+A rigorous assessment separates four claims:
 
-1. The description contains injection markers.
-2. An agent actually loads the tool into its context.
-3. The same context exposes a capability that can create impact.
-4. An authorized provider-specific mutation can be applied and restored.
+1. The description contains an injection signal.
+2. An agent loads the tool into a context that also contains high-impact capabilities.
+3. The provider permits an authorized description change.
+4. The exact original state can be restored and verified.
 
-AgentHound supports all four forms of evidence, but it does not collapse them into one exploit claim.
+AgentHound represents these claims separately. Passive collection and server-side processors handle the first two. When an active scan finds an eligible ContextForge-managed tool and an associated bearer credential, the autonomous planner can test the last two with a scan-specific marker and immediate recovery.
+
+## Start with a current scan
+
+Put the in-scope ContextForge MCP endpoint in a supported local agent configuration, along with the authorized credential the client uses. AgentHound always collects local configurations and configured endpoints, so no protocol-specific collector flag is required:
+
+```bash
+agenthound scan --output contextforge-scan.json
+```
+
+If a hostname or network range must be added to the scope, pass one positional target without disabling local collection:
+
+```bash
+agenthound scan gateway.example \
+  --exclude admin.gateway.example \
+  --output contextforge-scan.json
+```
+
+The normal scan is active. It can reuse compatible credentials, verify MCP resource access, and run eligible reversible ContextForge probes. Run it only in an environment you own or are explicitly authorized to assess.
+
+For detection without cross-target credential reuse, tool or model invocation, or mutation, use stealth mode:
+
+```bash
+agenthound scan --stealth --output contextforge-readonly.json
+```
+
+Stealth still performs anonymous and exact configured read-only collection. Protocol operations may use POST where MCP requires it, but the workflow does not invoke tools or change their metadata.
 
 ## Detect suspicious tool descriptions
 
-Start with collection. Scan the in-scope MCP endpoint and ingest the result into the local analysis server:
+During MCP enumeration, AgentHound evaluates tool descriptions with its compiled detection rules. Signals include override language, instructions to ignore other guidance, exfiltration-oriented text, hidden Unicode, embedded URLs, and encoded payload indicators.
+
+After moving the artifact to the analysis system, ingest and query the published projection:
 
 ```bash
-agenthound scan --mcp --url https://mcp.example.test/mcp \
-  --ingest http://127.0.0.1:8080
+agenthound-server ingest contextforge-scan.json
+agenthound-server query --prebuilt poisoned-tools
 ```
 
-The MCP collector inspects tool descriptions for signals such as imperative injection language, encoded blobs, hidden Unicode, and instructions that attempt to override safety constraints. A matching tool receives a `POISONED_DESCRIPTION` self-edge.
-
-That edge means the description matched a detection condition. It does not mean a model read the description, followed it, or invoked another tool.
+A matching tool receives a `POISONED_DESCRIPTION` relationship. This means its description matched a detection condition. It does not mean a model read the description, followed it, or invoked another tool.
 
 ## Map the poisoned context to capability
 
-The higher-value question is whether the same agent loads both the suspicious tool and a high-capability sibling. AgentHound's `POISONS_CONTEXT` processor scopes this relationship through the agent's trusted MCP servers.
+The next question is whether an agent trusts both the server exposing the injection-bearing tool and a server exposing a high-impact sibling. AgentHound's `POISONS_CONTEXT` processor scopes the relationship through those `TRUSTS_SERVER` edges.
 
 ```text
 injection-bearing tool
         |
-        | same agent context
+        | shared agent context
         v
 shell, code, credential, or email capability
 ```
 
-The scope avoids treating every poisoned tool as if it could affect every tool in the environment. The current high-capability sinks include shell access, code execution, credential access, and email sending. Review the exact conditions in the [AgentHound attack-path documentation](https://docs.agenthound.io/operator/attack-paths/).
+That scope avoids treating every suspicious tool as if it could influence every capability in the environment. Review the finding's persisted evidence subgraph, confidence, source collector, and coverage before describing the path as reachable.
 
-This graph evidence is enough to prioritize the agent for remediation. It is not enough to say that the model executed the sink.
+The graph evidence is enough to prioritize remediation. It is not proof that a model executed the sink.
 
-## Keep detection separate from mutation
+## Understand when the active round trip is eligible
 
-MCP standardizes tool observation and invocation, not a universal management API for rewriting tool metadata. A generic "poison any MCP server" command would therefore be misleading and unsafe.
+MCP standardizes tool discovery and invocation, not a universal API for rewriting tool metadata. AgentHound therefore limits active description validation to a concrete ContextForge management contract.
 
-AgentHound implements one explicit management contract for ContextForge. The adapter observes the server through MCP, resolves the matching ContextForge management object, verifies provider identity and authorization, and mutates only the selected tool description.
+The planner requires all of the following before it creates a round-trip candidate:
 
-The distinction is important:
+| Requirement | Why it matters |
+| --- | --- |
+| An HTTP MCP server with the supported ContextForge server-scoped endpoint | Binds the MCP observation to the provider's management object |
+| At least one tool observed from that server | Selects an exact tool name and graph identity |
+| Concrete bearer material associated with the server | Prevents masked, hashed, unresolved, or arbitrary strings from becoming credentials |
+| Active mode and an admitted endpoint | Honors `--stealth` and the scan's hard exclusions |
+| Provider identity and authorization checks | Prevents the adapter from treating a generic MCP server as a writable ContextForge target |
 
-| Stage | Changes target state? | Result |
-| --- | --- | --- |
-| Scan | No | Observed tools and detection signals |
-| Graph analysis | No | Derived context and attack-path relationships |
-| Poison dry run | No | Validated plan and provider preconditions |
-| Poison commit | Yes | One attributed description update plus a recovery receipt |
-| Revert | Yes | Conflict-aware restore followed by verification |
-
-Run mutation tests only in an environment you own or have explicit authorization to assess.
-
-## Dry-run the ContextForge adapter
-
-The target URL must use the ContextForge server-scoped MCP form. The adapter derives the server identity and management root from that URL:
+If the MCP and management surfaces require different authorized bearer tokens, AgentHound supports these environment overrides:
 
 ```bash
-echo "AUTHORIZED" | agenthound poison \
-  https://gateway.example/servers/<server-uuid>/mcp \
-  --type mcp.tool.description \
-  --adapter contextforge \
-  --target-id support-lookup \
-  --inject-file ./authorized-test-description.txt \
-  --engagement-id LAB-TOOL-POISON
+export AGENTHOUND_MCP_TOKEN='<authorized MCP bearer token>'
+export AGENTHOUND_CONTEXTFORGE_TOKEN='<authorized management bearer token>'
+agenthound scan --output contextforge-scan.json
 ```
 
-Without `--commit`, this is a dry run. The first invocation requires an explicit `AUTHORIZED` acknowledgement, and the engagement ID binds mutation state to its receipts.
+Avoid putting real tokens in command history. The resulting artifact contains concrete credentials and recovery material, so protect it accordingly. Keep the management token available if unresolved cleanup later requires `revert`.
 
-The ContextForge contract requires an identity with the exact read and update permissions needed for the selected server and tool. It does not mint or elevate credentials. The full provider, token, endpoint, and failure conditions are documented in [Offensive actions and recovery](https://docs.agenthound.io/operator/offensive-actions/).
+## Follow the automatic mutation and recovery sequence
 
-## Commit one mutation and keep the receipt
+For each eligible candidate, the active planner performs one bounded, exclusive sequence:
 
-After reviewing the plan and recovery conditions, add `--commit`:
+1. Resolve the exact ContextForge server and tool through MCP and management state.
+2. Persist the original description and typed recovery state in the scan artifact before the first write.
+3. Append a unique `agenthound:<scan-id>:<uuid>` marker.
+4. Observe the changed description through MCP.
+5. Restore the original immediately under a separate bounded cleanup context.
+6. Confirm the original state and checkpoint the recovery record as restored.
+
+Collection and other actions are drained before the mutation. Nothing else starts until restoration is confirmed. If the main scan is interrupted after a write may have occurred, cleanup receives its own bounded context instead of inheriting the cancellation.
+
+The marker tests whether the exact metadata path can be changed, observed, and restored. It does not ask a model to obey a malicious instruction.
+
+## Inspect the execution journal
+
+Action and recovery state live under `meta.extra.scan_execution` in the same JSON artifact as the graph. This query extracts the relevant summary without printing the embedded credential or full recovery contract:
 
 ```bash
-agenthound poison \
-  https://gateway.example/servers/<server-uuid>/mcp \
-  --type mcp.tool.description \
-  --adapter contextforge \
-  --target-id support-lookup \
-  --inject-file ./authorized-test-description.txt \
-  --engagement-id LAB-TOOL-POISON \
-  --commit
+jq '.meta.extra.scan_execution | {
+  status,
+  summary,
+  roundtrips: [
+    .actions[]
+    | select(.action == "mcp.description.roundtrip")
+    | {status, outcome, recovery_id}
+  ],
+  recovery: [
+    .recovery[]
+    | select(.action == "mcp.description.roundtrip")
+    | {id, status, error}
+  ]
+}' contextforge-scan.json
 ```
 
-AgentHound persists a typed recovery receipt before reporting the mutation as applied. The receipt includes the target identity, provider contract, original and updated descriptions, versions, and provider attribution needed for recovery. It does not store management credentials or raw authentication tokens.
+A fully successful validation records the action outcome `mutation_observed_restored` and the linked recovery status `restored`. An empty `roundtrips` array means the planner did not find an eligible candidate; it is not evidence that the provider is immutable or safe.
 
-The forward write is not blindly retried. If the write response is lost, the adapter reconciles state with bounded read-only observations. This avoids turning a transient response failure into repeated mutation.
+The ContextForge round-trip status remains execution-journal evidence. It does not create a graph edge, a poisoning finding, or an additional risk score. Detection still comes from the collected description and the server's analysis rules.
 
-## Revert and verify the original state
+## Recover from unresolved cleanup
 
-Restore the engagement by ID:
+If the final scan summary reports unresolved cleanup, preserve the artifact and run:
 
 ```bash
-agenthound revert LAB-TOOL-POISON
+agenthound revert contextforge-scan.json
 ```
 
-The adapter checks the exact object, version, and AgentHound operation attribution before it writes. A conflicting third-party change fails closed instead of being silently overwritten. After the restore, AgentHound verifies the original description through management state and, when the server association is still intact, through MCP observation.
+`revert` reads the target, TLS setting, exclusions, credential references, and typed recovery state from that file. It retries unresolved records newest-first, observes current state before writing, skips records already marked restored, and checkpoints each attempt.
 
-In my isolated ContextForge lab, the direct poison-and-revert scenario recorded this result:
+The recovery path fails closed on conflicting third-party changes instead of silently overwriting them. It can still be blocked by target deletion, access loss, provider-policy drift, or an unreachable endpoint. A recovery implementation cannot force an external provider to accept a restore, which is why the original state is stored before mutation and the final summary must be checked.
 
-```json
-{
-  "ok": true,
-  "engagement_id": "RTV-POISON-MCP",
-  "mutated": true,
-  "reverted": true,
-  "before": "Look up a customer support case by case ID.",
-  "after": "TAMPERED-BY-AGENTHOUND-OFFLINE-HARNESS",
-  "restored": "Look up a customer support case by case ID."
-}
-```
+## Keep proof boundaries explicit
 
-This proves that the disposable target accepted one attributed metadata change and that AgentHound restored the original value. It does not prove that an AI model obeyed the changed text or that a privileged tool was invoked.
+The three most useful AgentHound results answer different questions:
 
-## Validate the complete round trip as a campaign
+| Result | What it proves |
+| --- | --- |
+| `POISONED_DESCRIPTION` | Current tool metadata matched an injection rule |
+| `POISONS_CONTEXT` | That tool shares an agent context with a high-impact capability under the processor's conditions |
+| `mutation_observed_restored` | The authorized ContextForge metadata path accepted a unique marker, exposed it through MCP, and returned to the original state |
 
-AgentHound also provides a bounded `mcp-poison-roundtrip` campaign. It generates a benign run marker, applies it once, observes the changed value, restores the original, and confirms the postcondition:
+None of them alone proves that a model followed the text or invoked a privileged tool. A model-behavior claim requires a separate authorized test that observes the prompt, decision, tool call, authorization result, and downstream effect.
 
-```bash
-agenthound campaign \
-  https://gateway.example/servers/<server-uuid>/mcp \
-  --scenario mcp-poison-roundtrip \
-  --adapter contextforge \
-  --target-id support-lookup \
-  --engagement-id LAB-MCP-ROUNDTRIP \
-  --commit
-```
-
-The integration run produced five ordered observations:
-
-| Step | Observation |
-| ---: | --- |
-| 1 | Authorization accepted |
-| 2 | Mutation applied |
-| 3 | Injected marker verified |
-| 4 | Original description restored |
-| 5 | Original postcondition confirmed |
-
-The final run report recorded 32 of 64 allowed requests, one of two allowed mutations, an oracle outcome of `mutation_verified`, and cleanup status `restored` with `original_confirmed`.
-
-This campaign is standalone target-mutation validation. It creates no graph finding and makes no claim about a predicted credential or execution path. That boundary is a feature, not a caveat hidden in the output.
-
-## Understand the recovery limit
-
-ContextForge v1.0.5 does not expose a conditional update primitive that the adapter can use for compare-and-swap. AgentHound compensates with exact object identity, version checks, unique operation attribution, one forward write, and post-write verification.
-
-Those controls provide strong evidence and conflict detection, but they cannot remove the read-to-write race entirely. A third party can still edit the same row between the final check and the update. Run the adapter in an exclusive operation window. Strict atomic conflict safety requires server-side conditional updates.
-
-Recovery can also fail if provider validation policy changes and the original description is no longer accepted. A compile-time reverter guarantees that the module has a recovery implementation. It cannot force an external provider to accept a restore after policy drift, deletion, access loss, or conflicting edits.
-
-## Remediate without running the mutation test
+## Remediate without running active validation
 
 You do not need to mutate production metadata to fix a suspicious path. Defenders can:
 
-1. Remove hidden or imperative instructions from tool descriptions.
-2. Review description changes like code changes, with ownership and provenance.
-3. Pin or attest trusted server and tool metadata where the platform permits it.
+1. Remove hidden, encoded, or imperative instructions from tool descriptions.
+2. Review description changes like code changes, with clear ownership and provenance.
+3. Pin or attest server and tool metadata where the platform permits it.
 4. Separate untrusted retrieval tools from credential, shell, code, and email capabilities.
 5. Require user confirmation for high-impact calls and show the exact arguments.
 6. Apply least-privilege identities at the tool and downstream resource layers.
-7. Alert on unexpected description, version, owner, or attribution changes.
-8. Rescan and confirm that `POISONED_DESCRIPTION` and `POISONS_CONTEXT` paths are gone.
+7. Alert on unexpected description, schema, version, owner, or attribution changes.
+8. Rescan and confirm that `POISONED_DESCRIPTION` and `POISONS_CONTEXT` findings are gone or constrained.
 
-The official [MCP security best-practices document](https://modelcontextprotocol.io/specification/draft/basic/security_best_practices) focuses on surrounding protocol risks such as authorization, token handling, SSRF, and local server compromise. Tool metadata review should sit alongside those controls, not replace them.
+The official [MCP security best-practices document](https://modelcontextprotocol.io/specification/draft/basic/security_best_practices) covers related authorization, token-handling, SSRF, and local-server risks. Metadata integrity belongs alongside those controls.
 
-## Continue from graph to data flow
+## Continue from metadata to the wider graph
 
-If the environment has not been mapped yet, begin with [How to Build an AI Agent Attack Graph with AgentHound](/build-ai-agent-attack-graph-agenthound/).
+[How to Build an AI Agent Attack Graph with AgentHound](/build-ai-agent-attack-graph-agenthound/) covers the autonomous collector, manual ingestion, evidence states, and attack-path queries.
 
-To analyze how a poisoned description or untrusted tool output could reach a privileged capability, continue with [Prompt Injection Is a Data-Flow Problem: Mapping AI Agent Attack Paths with AgentHound](/prompt-injection-ai-agent-attack-paths-agenthound/).
-
-The safe sequence is observation, graph analysis, authorization, one controlled mutation, and verified recovery. Skipping those boundaries turns a useful security test into an unauditable state change.
+[Prompt Injection Is a Data-Flow Problem: Mapping AI Agent Attack Paths with AgentHound](/prompt-injection-ai-agent-attack-paths-agenthound/) connects poisoned descriptions and instruction files to untrusted sources, shared resources, and high-impact sinks.

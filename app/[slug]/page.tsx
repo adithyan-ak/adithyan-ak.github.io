@@ -45,7 +45,7 @@ export default async function DossierFieldNote({
 
       <header className={`${styles.utility} ${styles.articleUtility}`}>
         <p>
-          FN–{post.file} <span aria-hidden="true">/</span> Field note
+          FN-{post.file} <span aria-hidden="true">/</span> Field note
         </p>
         <Link href="/blog">
           <span className={styles.desktopLabel}>Field note </span>index ↗
@@ -62,7 +62,7 @@ export default async function DossierFieldNote({
           />
 
           <div className={styles.folderTab}>
-            FN–{post.file} / {post.category}
+            FN-{post.file} / {post.category}
           </div>
 
           <header className={styles.articleHeader}>
@@ -122,7 +122,7 @@ export default async function DossierFieldNote({
           <nav className={styles.nextFile} aria-label="Next field note">
             <div>
               <span>Next public file</span>
-              <small>FN–{nextPost.file}</small>
+              <small>FN-{nextPost.file}</small>
             </div>
             <Link href={postPath(nextPost.slug)}>
               <strong>{nextPost.title}</strong>
@@ -131,8 +131,8 @@ export default async function DossierFieldNote({
           </nav>
 
           <footer className={styles.footer}>
-            <Link href="/">AK–AIS–2026 / Main dossier</Link>
-            <span>End of file FN–{post.file}</span>
+            <Link href="/">AK-AIS-2026 / Main dossier</Link>
+            <span>End of file FN-{post.file}</span>
           </footer>
         </article>
       </main>

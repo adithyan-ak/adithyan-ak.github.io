@@ -2,24 +2,24 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getAllPosts } from "@/lib/posts";
 import { pageAlternates } from "@/lib/seo";
-import { postPath } from "@/lib/site";
+import { postPath, SITE } from "@/lib/site";
 import styles from "./dossier-blog.module.css";
 
 export const metadata: Metadata = {
-  title: "Field Notes — Adithyan Arun Kumar",
+  title: SITE.title,
   description:
     "Independent research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
   alternates: pageAlternates("/blog"),
   openGraph: {
     type: "website",
     url: "/blog",
-    title: "Field Notes — Adithyan Arun Kumar",
+    title: SITE.title,
     description:
       "Independent research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Field Notes — Adithyan Arun Kumar",
+    title: SITE.title,
     description:
       "Independent research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
     images: ["/og-dossier.png"],
@@ -52,7 +52,7 @@ export default function DossierFieldNotes() {
           <header className={styles.indexHeader}>
             <div className={styles.filingLine}>
               <p>
-                <span>Series</span> AK–FN–2026
+                <span>Series</span> AK-FN-2026
               </p>
               <p>
                 <span>Entries</span> {String(posts.length).padStart(2, "0")}
@@ -67,8 +67,8 @@ export default function DossierFieldNotes() {
                 <p className={styles.kicker}>Research archive / public record</p>
                 <h1 id="field-notes-title">Field Notes</h1>
                 <p>
-                  Technical dispatches on agentic attack paths, protocol
-                  boundaries, delegated authority, and offensive engineering.
+                  Notes on agentic attack paths, protocol boundaries, delegated
+                  authority, and offensive engineering.
                 </p>
               </div>
               <div className={styles.archiveStamp} aria-hidden="true">
@@ -91,7 +91,7 @@ export default function DossierFieldNotes() {
                 key={post.slug}
               >
                 <div className={styles.fileNumber}>
-                  <span>FN–{post.file}</span>
+                  <span>FN-{post.file}</span>
                   <small>{post.category}</small>
                 </div>
                 <div className={styles.fileSubject}>
@@ -111,8 +111,9 @@ export default function DossierFieldNotes() {
             <div>
               <span>Handling note 01</span>
               <p>
-                Entries are research artifacts, not announcements. Each file
-                records the boundary, evidence, and engineering consequence.
+                These are technical notes rather than announcements. Each file
+                records what I tested, what I observed, and what the evidence
+                supports.
               </p>
             </div>
             <div>
@@ -125,7 +126,7 @@ export default function DossierFieldNotes() {
           </aside>
 
           <footer className={styles.footer}>
-            <Link href="/">AK–AIS–2026 / Main dossier</Link>
+            <Link href="/">AK-AIS-2026 / Main dossier</Link>
             <span>End of index</span>
           </footer>
         </article>

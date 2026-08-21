@@ -9,7 +9,7 @@ export function pageAlternates(canonical: string): Metadata["alternates"] {
       "application/rss+xml": [
         {
           url: "/rss.xml",
-          title: `${SITE.name} — Field Notes`,
+          title: `${SITE.name} Field Notes`,
         },
       ],
     },
@@ -108,7 +108,7 @@ export function postJsonLd(post: Post) {
         isPartOf: {
           "@type": "Blog",
           "@id": `${absoluteUrl("/blog")}#blog`,
-          name: `${SITE.name} — Field Notes`,
+          name: `${SITE.name} Field Notes`,
         },
       },
       {
