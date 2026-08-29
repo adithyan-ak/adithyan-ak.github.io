@@ -6,7 +6,7 @@ deck: "How to combine Hermes Agent and Mnemosyne without transcript pollution, c
 slug: "optimal-hermes-mnemosyne-memory-architecture"
 file: "08"
 publishedAt: "2026-08-29T03:10:16.000Z"
-updatedAt: "2026-08-29T03:26:15.000Z"
+updatedAt: "2026-08-29T03:29:08.000Z"
 category: "AI Agent Infrastructure"
 tags:
   - "Hermes Agent"
@@ -28,7 +28,7 @@ Hermes Agent and Mnemosyne already have most of the machinery needed to avoid th
 
 The missing piece is ownership. Each system needs a narrow job, and the bridge between them must distrust anything that has not been verified.
 
-> **Deployment note, accurate August 29, 2026:** This is the design behind a running custom `mnemosyne_learning_bridge` provider on Hermes Agent 0.20.5, Python 3.11, `mnemosyne-memory` 3.15.1, and `mnemosyne-hermes` 0.7.0. Before cutover, it passed clean-wheel loading, same-project recall, foreign-project exclusion, mutation-policy, canary-cleanup, SQLite-integrity, and rollback tests. The stock integration remains the simpler option for ordinary personal memory. The custom bridge adds evidence extraction, project isolation, and fail-closed mutation policy.
+> **Deployment note, accurate August 29, 2026:** This is the design behind a running custom `mnemosyne_learning_bridge` 0.1.0 provider, released as `memory-architecture-v1.0.0` from reviewed commit `82e8dbe7c5972ad400c12af179d51a87a3ccc2de`. It runs on Hermes Agent 0.20.5, Python 3.11, `mnemosyne-memory` 3.15.1, and `mnemosyne-hermes` 0.7.0. Before cutover, it passed clean-wheel loading, same-project recall, foreign-project exclusion, mutation-policy, canary-cleanup, SQLite-integrity, and rollback tests. The stock integration remains the simpler option for ordinary personal memory. The custom bridge adds evidence extraction, project isolation, and fail-closed mutation policy.
 
 ## The architecture in one diagram
 
