@@ -6,7 +6,7 @@ deck: "How to combine Hermes Agent and Mnemosyne without transcript pollution, c
 slug: "optimal-hermes-mnemosyne-memory-architecture"
 file: "08"
 publishedAt: "2026-08-29T03:10:16.000Z"
-updatedAt: "2026-08-29T04:11:58.000Z"
+updatedAt: "2026-08-29T04:16:53.000Z"
 category: "AI Agent Infrastructure"
 tags:
   - "Hermes Agent"
@@ -28,7 +28,7 @@ Hermes Agent and Mnemosyne already have most of the machinery needed to avoid th
 
 The missing piece is ownership. Each system needs a narrow job, and the bridge between them must distrust anything that has not been verified.
 
-> **Deployment note, accurate August 29, 2026:** This is the design behind a running custom `mnemosyne_learning_bridge` 0.1.0 provider, released as `memory-architecture-v1.0.0` from reviewed commit `82e8dbe7c5972ad400c12af179d51a87a3ccc2de`. It runs on Hermes Agent 0.20.5, Python 3.11, `mnemosyne-memory` 3.15.1, and `mnemosyne-hermes` 0.7.0. Before cutover, it passed clean-wheel loading, same-project recall, foreign-project exclusion, mutation-policy, canary-cleanup, SQLite-integrity, and rollback tests. The stock integration remains the simpler option for ordinary personal memory. The custom bridge adds evidence extraction, project isolation, and fail-closed mutation policy.
+> **Implementation status:** This article describes a production-tested reference architecture, not a currently supported public package. The stock Hermes and Mnemosyne integration remains the simpler option for ordinary personal memory. The additional bridge controls cover evidence extraction, project isolation, deduplication, and fail-closed mutation policy.
 
 ## The architecture in one diagram
 
@@ -374,9 +374,9 @@ No. Profile isolation separates Hermes profiles or users into different Mnemosyn
 
 Stock integration provides the provider lifecycle, durable memory, and Mnemosyne tools. Project-bound execution episodes, deterministic trajectory extraction, cross-project exclusion, mutation staging, and replay fingerprints require the custom bridge described here.
 
-### Where is the bridge code?
+### Is there a public bridge implementation?
 
-This deployment uses a private, environment-specific provider extension. The public contract is the official Hermes memory-provider API.[1] The article documents the security and data boundaries so another implementation can be reviewed against them without pretending that a private wheel is a supported public package.
+Not yet. The public contract is the official Hermes memory-provider API.[1] Until a standalone implementation is released and supported, treat this article as a reference architecture rather than installation documentation.
 
 ### How do I roll back?
 
