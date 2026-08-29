@@ -6,7 +6,7 @@ deck: "How to combine Hermes Agent and Mnemosyne without transcript pollution, c
 slug: "optimal-hermes-mnemosyne-memory-architecture"
 file: "08"
 publishedAt: "2026-08-29T03:10:16.000Z"
-updatedAt: "2026-08-29T04:21:55.000Z"
+updatedAt: "2026-08-29T05:13:21.000Z"
 category: "AI Agent Infrastructure"
 tags:
   - "Hermes Agent"
@@ -324,7 +324,7 @@ Exclude `.env`, authentication files, tokens, transcripts, logs, and caches. Run
 
 ## Acceptance tests that catch real failures
 
-An installation is not complete when imports succeed. I treated this architecture as production-ready only after these tests passed:
+An installation is not complete when imports succeed. These are the tests I would run before relying on this architecture:
 
 1. Store a non-sensitive canary and recall it from a fresh process using a paraphrase.
 2. Delete the canary and verify that working, episodic, FTS, and vector references are gone.
@@ -374,7 +374,7 @@ Stock integration provides the provider lifecycle, durable memory, and Mnemosyne
 
 ### Is there a public bridge implementation?
 
-Not yet. The public contract is the official Hermes memory-provider API.[1] Until a standalone implementation is released and supported, treat this article as a reference architecture rather than installation documentation.
+Yes. I published the implementation as the [Hermes Mnemosyne Learning Bridge](https://github.com/adithyan-ak/hermes-mnemosyne-learning-bridge). It is an experimental alpha with a source-only history, tests, installation and rollback instructions, and a threat model. It is not a drop-in replacement for the stock integration; use the stock provider unless you need the extra project, evidence, and mutation-policy controls described here.
 
 ### How do I roll back?
 
