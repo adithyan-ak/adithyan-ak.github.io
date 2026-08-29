@@ -1,12 +1,12 @@
 ---
-title: "The Hermes and Mnemosyne Memory Architecture I Trust in Production"
-seoTitle: "Production Hermes and Mnemosyne Memory Architecture"
-description: "A production architecture for Hermes Agent and Mnemosyne with project-isolated recall, verified execution memory, safe writes, and rollback."
+title: "A Secure Hermes and Mnemosyne Memory Architecture"
+seoTitle: "Secure Hermes and Mnemosyne Memory Architecture"
+description: "A secure architecture for Hermes Agent and Mnemosyne with project-isolated recall, verified execution memory, safe writes, and rollback controls."
 deck: "How to combine Hermes Agent and Mnemosyne without transcript pollution, cross-project leaks, duplicate truth stores, or an agent training itself on its own claims."
 slug: "optimal-hermes-mnemosyne-memory-architecture"
 file: "08"
 publishedAt: "2026-08-29T03:10:16.000Z"
-updatedAt: "2026-08-29T04:16:53.000Z"
+updatedAt: "2026-08-29T04:21:55.000Z"
 category: "AI Agent Infrastructure"
 tags:
   - "Hermes Agent"
@@ -27,8 +27,6 @@ Giving an AI agent long-term memory sounds simple: save conversations, embed the
 Hermes Agent and Mnemosyne already have most of the machinery needed to avoid those failures. Hermes has exact session history, tools, lifecycle hooks, skills, profiles, and provider plugins. Mnemosyne provides local SQLite-backed durable memory, hybrid retrieval, canonical facts, provenance, and consolidation. Hermes's provider contract can pass the completed turn, including tool calls and tool results, to `sync_turn(..., messages=...)`.[1] Mnemosyne can run locally in one SQLite database without requiring an external memory service.[4]
 
 The missing piece is ownership. Each system needs a narrow job, and the bridge between them must distrust anything that has not been verified.
-
-> **Implementation status:** This article describes a production-tested reference architecture, not a currently supported public package. The stock Hermes and Mnemosyne integration remains the simpler option for ordinary personal memory. The additional bridge controls cover evidence extraction, project isolation, deduplication, and fail-closed mutation policy.
 
 ## The architecture in one diagram
 
@@ -116,7 +114,7 @@ A compact episode can use this shape:
 ```json
 {
   "task": "Run the provider acceptance suite",
-  "context": "Hermes memory-provider extension on Python 3.11",
+  "context": "Hermes memory-provider extension",
   "observation": "The clean-wheel test could not import the entry point",
   "decision": "Declare the provider under hermes_agent.memory_providers",
   "action": "Added the package entry point and rebuilt the wheel",
