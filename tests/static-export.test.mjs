@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 const posts = [
+  "optimal-hermes-mnemosyne-memory-architecture",
   "build-ai-agent-attack-graph-agenthound",
   "prompt-injection-ai-agent-attack-paths-agenthound",
   "mcp-tool-poisoning-detect-reverse-agenthound",
@@ -41,7 +42,7 @@ test("exports the canonical declassified dossier", () => {
   assert.match(html, /GHSA-f5hv-jrwp-gh59/);
   assert.match(html, /<link rel="icon" href="\/icon\.svg\?[^\"]+"/);
   assert.match(html, /Service record/i);
-  assert.match(html, /Context-Level Secret Isolation/i);
+  assert.match(html, /Hermes and Mnemosyne Memory Architecture/i);
   assert.doesNotMatch(html, /[—–]/);
   assert.doesNotMatch(
     html,
@@ -62,7 +63,7 @@ test("exports the field-note index with root-level article links", () => {
     /<meta name="twitter:title" content="Adithyan Arun Kumar"/,
   );
   assert.match(html, /Field Notes/i);
-  assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?07/);
+  assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?08/);
   assert.doesNotMatch(html, /[—–]/);
   for (const slug of posts) {
     assert.match(html, new RegExp(`href="/${slug}/"`));
