@@ -1,0 +1,15 @@
+flowchart LR
+    A["Direct durable user assertion<br/>or correction"]
+    B["Explicit foreground<br/>Mnemosyne write"]
+    C["Set provenance<br/><code>veracity = stated</code>"]
+    D["Choose canonical or global scope<br/>only when appropriate"]
+    E["Immediate read-back"]
+
+    A --> B --> C --> D --> E
+
+    classDef input fill:#dce8e9,stroke:#56777a,stroke-width:2px,color:#191715;
+    classDef process fill:#f0e4ce,stroke:#8a6f47,stroke-width:2px,color:#191715;
+    classDef verify fill:#dfe9d8,stroke:#607b53,stroke-width:2px,color:#191715;
+    class A input;
+    class B,C,D process;
+    class E verify;

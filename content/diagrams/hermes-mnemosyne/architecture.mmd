@@ -1,0 +1,18 @@
+flowchart LR
+    A["Authoritative policy<br/><small>SOUL.md · AGENTS.md · Hermes configuration</small>"]
+    B["Hermes Agent<br/><small>Sessions · tools · tasks · skills · approvals · orchestration</small>"]
+    C["Thin learning bridge<br/><small>Project binding · evidence extraction · safety gates · deduplication</small>"]
+    D[("Mnemosyne<br/><small>Facts · preferences · corrections · canonical values<br/>provenance · project-filtered execution episodes</small>")]
+
+    A --> B
+    B -->|Completed tool trajectory| C
+    C -->|At most one compact episode| D
+
+    classDef authority fill:#eee6d8,stroke:#746858,stroke-width:2px,color:#191715;
+    classDef hermes fill:#dce8e9,stroke:#56777a,stroke-width:2px,color:#191715;
+    classDef bridge fill:#f0e4ce,stroke:#8a6f47,stroke-width:2px,color:#191715;
+    classDef memory fill:#e6dded,stroke:#725c7e,stroke-width:2px,color:#191715;
+    class A authority;
+    class B hermes;
+    class C bridge;
+    class D memory;

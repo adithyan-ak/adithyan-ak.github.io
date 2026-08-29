@@ -1,0 +1,22 @@
+flowchart LR
+    A["Verified episodes"]
+    B["Bounded read-only<br/>evidence set"]
+    C["Report and<br/>suggested diff"]
+    D{"Human approval?"}
+    E["Apply skill change"]
+    F["No mutation"]
+
+    A --> B --> C --> D
+    D -->|Approve| E
+    D -->|Reject| F
+
+    classDef evidence fill:#dce8e9,stroke:#56777a,stroke-width:2px,color:#191715;
+    classDef process fill:#f0e4ce,stroke:#8a6f47,stroke-width:2px,color:#191715;
+    classDef decision fill:#eee6d8,stroke:#746858,stroke-width:2px,color:#191715;
+    classDef success fill:#dfe9d8,stroke:#607b53,stroke-width:2px,color:#191715;
+    classDef stop fill:#ead9d6,stroke:#8a5b55,stroke-width:2px,color:#191715;
+    class A evidence;
+    class B,C process;
+    class D decision;
+    class E success;
+    class F stop;

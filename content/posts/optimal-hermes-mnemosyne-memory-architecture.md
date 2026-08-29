@@ -6,7 +6,7 @@ deck: "How to combine Hermes Agent and Mnemosyne without transcript pollution, c
 slug: "optimal-hermes-mnemosyne-memory-architecture"
 file: "08"
 publishedAt: "2026-08-29T03:10:16.000Z"
-updatedAt: "2026-08-29T03:29:08.000Z"
+updatedAt: "2026-08-29T04:11:58.000Z"
 category: "AI Agent Infrastructure"
 tags:
   - "Hermes Agent"
@@ -32,25 +32,7 @@ The missing piece is ownership. Each system needs a narrow job, and the bridge b
 
 ## The architecture in one diagram
 
-```text
-Authoritative policy
-  SOUL.md / AGENTS.md / Hermes configuration
-                         |
-                         v
-Hermes Agent
-  sessions, tools, tasks, skills, approvals, orchestration
-                         |
-                         | completed tool trajectory
-                         v
-Thin learning bridge
-  project binding -> evidence extraction -> safety gates -> deduplication
-                         |
-                         | at most one compact episode
-                         v
-Mnemosyne
-  facts, preferences, corrections, canonical values,
-  provenance, project-filtered execution episodes
-```
+![Flowchart showing authoritative policy passing through Hermes Agent and a verified learning bridge into Mnemosyne](/images/posts/hermes-mnemosyne-architecture.jpg "Hermes and Mnemosyne memory architecture")
 
 The project binding, trajectory extraction, deterministic verification, mutation staging, and fingerprint deduplication in this diagram are custom bridge behavior. The stock Hermes and Mnemosyne integration does not add those controls by itself.
 
@@ -90,13 +72,7 @@ I now prefer Python over TypeScript for backend services.
 
 must not disappear because no tool trajectory occurred. The operating rule is narrow:
 
-```text
-Direct durable user assertion or correction
-  -> explicit foreground Mnemosyne write
-  -> veracity="stated"
-  -> canonical or global only when appropriate
-  -> immediate read-back
-```
+![Flowchart for explicitly storing a durable user assertion with stated provenance, appropriate scope, and immediate read-back](/images/posts/hermes-mnemosyne-durable-assertion.jpg "Intentional durable assertion capture")
 
 This is intentional capture, not transcript ingestion. If the statement is ambiguous, temporary, or inferred, the agent should stage it or omit it.
 
@@ -178,13 +154,7 @@ Plain session scope is too narrow for reusable experience. A lesson from today's
 
 The workable design is:
 
-```text
-Reusable execution episode
-  -> global storage
-  -> mandatory normalized project_id metadata
-  -> project-aware filtering on explicit recall
-  -> project-aware filtering on silent prefetch
-```
+![Flowchart showing a reusable execution episode stored globally and filtered by project during explicit recall and silent prefetch](/images/posts/hermes-mnemosyne-project-isolation.jpg "Project-isolated execution memory")
 
 The project identity must come from trusted initialization context, not from model-controlled tool arguments. Select one repository identity at provider startup, normally a credential-free host and repository path from `origin`. Map supported SSH and HTTPS forms to the same host and path, remove a terminal `.git`, lowercase the host, and preserve repository-path bytes and case unless that host has an explicit policy. Forks remain separate because their paths differ. Worktrees use the common repository identity; submodules bind independently.
 
@@ -272,13 +242,7 @@ An agent creates a feedback loop when it stores recalled memory, summarizes the 
 
 Apply the same boundary to skill learning:
 
-```text
-Verified episodes
-  -> bounded read-only evidence set
-  -> report and suggested diff
-  -> human approval
-  -> skill change
-```
+![Flowchart requiring verified episodes, bounded evidence, a suggested diff, and human approval before a skill changes](/images/posts/hermes-mnemosyne-skill-learning.jpg "Human-approved skill learning from verified evidence")
 
 One successful episode should not rewrite a procedure. For ordinary procedures, require at least two independent verified episodes or an explicit user request. Use a higher threshold for security-sensitive workflows. Hub, external, manually maintained, and pinned skills should never be changed autonomously.
 

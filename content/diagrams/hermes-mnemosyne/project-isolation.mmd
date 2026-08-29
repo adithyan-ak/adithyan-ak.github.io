@@ -1,0 +1,17 @@
+flowchart LR
+    A["Reusable execution episode"]
+    B["Global storage"]
+    C["Required normalized<br/><code>project_id</code> metadata"]
+    D["Project filter on<br/>explicit recall"]
+    E["Project filter on<br/>silent prefetch"]
+
+    A --> B --> C
+    C --> D
+    C --> E
+
+    classDef episode fill:#dce8e9,stroke:#56777a,stroke-width:2px,color:#191715;
+    classDef storage fill:#e6dded,stroke:#725c7e,stroke-width:2px,color:#191715;
+    classDef guard fill:#f0e4ce,stroke:#8a6f47,stroke-width:2px,color:#191715;
+    class A episode;
+    class B storage;
+    class C,D,E guard;
