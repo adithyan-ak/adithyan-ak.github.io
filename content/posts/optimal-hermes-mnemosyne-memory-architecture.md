@@ -1,12 +1,12 @@
 ---
 title: "The Hermes and Mnemosyne Memory Architecture I Trust in Production"
-seoTitle: "Optimal Hermes and Mnemosyne Memory Architecture"
+seoTitle: "Production Hermes and Mnemosyne Memory Architecture"
 description: "A production architecture for Hermes Agent and Mnemosyne with project-isolated recall, verified execution memory, safe writes, and rollback."
 deck: "How to combine Hermes Agent and Mnemosyne without transcript pollution, cross-project leaks, duplicate truth stores, or an agent training itself on its own claims."
 slug: "optimal-hermes-mnemosyne-memory-architecture"
 file: "08"
 publishedAt: "2026-08-29T03:10:16.000Z"
-updatedAt: "2026-08-29T03:19:40.000Z"
+updatedAt: "2026-08-29T03:26:15.000Z"
 category: "AI Agent Infrastructure"
 tags:
   - "Hermes Agent"
@@ -51,6 +51,8 @@ Mnemosyne
   facts, preferences, corrections, canonical values,
   provenance, project-filtered execution episodes
 ```
+
+The project binding, trajectory extraction, deterministic verification, mutation staging, and fingerprint deduplication in this diagram are custom bridge behavior. The stock Hermes and Mnemosyne integration does not add those controls by itself.
 
 The ownership rules are strict:
 
@@ -144,9 +146,10 @@ A compact episode can use this shape:
   "action": "Added the package entry point and rebuilt the wheel",
   "outcome": "The clean environment loaded the provider",
   "verification": {
-    "type": "process_exit",
-    "command": "pytest -q",
-    "exit_code": 0
+    "type": "test_result",
+    "command": "pytest -q tests/test_entrypoint.py",
+    "exit_code": 0,
+    "predicate": "target test collected and passed"
   },
   "applicability": "Packaged Hermes memory providers",
   "metadata": {
@@ -167,7 +170,7 @@ The bridge may summarize deterministic evidence, but it may not promote its own 
 - an exact file read-back;
 - an authoritative API response.
 
-A model saying "the deployment succeeded" is not verification. A subagent saying "all tests pass" is not verification either. The parent must inspect the actual result.
+A zero exit code proves only that the process exited successfully. The claimed outcome also needs an objective-specific predicate: the named test passed, the expected artifact exists and matches, or the API read-back contains the expected state. A model saying "the deployment succeeded" is not verification. A subagent saying "all tests pass" is not verification either. The parent must inspect the actual result.
 
 ## Project isolation has to survive new sessions
 
@@ -183,18 +186,20 @@ Reusable execution episode
   -> project-aware filtering on silent prefetch
 ```
 
-The project identity must come from trusted initialization context, not from model-controlled tool arguments. For a Git repository, a stable identifier can be derived from the exact remote identity:
+The project identity must come from trusted initialization context, not from model-controlled tool arguments. Select one repository identity at provider startup, normally a credential-free host and repository path from `origin`. Map supported SSH and HTTPS forms to the same host and path, remove a terminal `.git`, lowercase the host, and preserve repository-path bytes and case unless that host has an explicit policy. Forks remain separate because their paths differ. Worktrees use the common repository identity; submodules bind independently.
+
+Hash the resulting canonical bytes instead of storing the remote directly:
 
 ```python
 from hashlib import sha256
 
 
-def project_id(remote_bytes: bytes) -> str:
-    digest = sha256(b"git-remote\0" + remote_bytes).hexdigest()
+def project_id(canonical_remote: bytes) -> str:
+    digest = sha256(b"git-remote\0" + canonical_remote).hexdigest()
     return f"git:sha256:{digest}"
 ```
 
-Bind it once when the provider initializes. Do not rebind the active project because a later shell command happens to contain another path. If no trusted project root or repository identity exists, leave the session unbound and skip project episode creation.
+Bind it once when the provider initializes. Do not rebind the active project because a later shell command happens to contain another path. Never retain credentials that appeared in a remote URL. If no trusted repository identity exists, leave the session unbound and skip project episode creation.
 
 Every retrieval path must enforce the same filter. Protecting silent prefetch while leaving explicit recall unfiltered still leaks memories. Filtering only the first line of a multiline result still leaks memories. The tests need same-project recall and foreign-project exclusion for both paths.
 
@@ -241,6 +246,8 @@ The policy I use is:
 | Shared-memory write | Disabled |
 | Skill modification | Report and staged diff only |
 | Secret-bearing content | Reject |
+
+The secret gate is defense in depth, not a guarantee. Pattern matching will miss some credentials and sensitive data. Reject the whole episode when practical, redact only when the remaining record is still useful, and test database rows, logs, exports, pending writes, and error paths. I use the same trust-boundary principle described in my [AgentMask field note](/context-level-secret-isolation-for-ai-coding-agents-with-agentmask/): keep secrets out of model and memory context instead of trying to clean them up later.
 
 Pending approvals should be owner-only, content-addressed, expiring, and single-use. The approval command should bind to an exact ID:
 
@@ -312,18 +319,35 @@ Changing the embedding model should be a separate backed-up reindex project, not
 
 ## Back up the database as a database
 
-Copying a live SQLite file can miss WAL state. Use SQLite's online backup API, then restore the result into a temporary location and run both integrity checks:
+Copying a live SQLite file can omit committed changes that still live in the WAL file.[6] Use SQLite's online backup API to create a consistent snapshot while the source remains available.[5]
 
 ```python
+import os
 import sqlite3
+from contextlib import closing
+from pathlib import Path
 
-source = sqlite3.connect("file:mnemosyne.db?mode=ro", uri=True)
-destination = sqlite3.connect("mnemosyne-backup.db")
-source.backup(destination)
+source_path = Path("mnemosyne.db")
+backup_path = Path("mnemosyne-backup.db")
 
-assert destination.execute("PRAGMA quick_check").fetchone()[0] == "ok"
-assert destination.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
+if backup_path.exists():
+    raise FileExistsError(backup_path)
+
+with closing(
+    sqlite3.connect(f"file:{source_path}?mode=ro", uri=True)
+) as source, closing(sqlite3.connect(backup_path)) as destination:
+    source.backup(destination)
+
+os.chmod(backup_path, 0o600)
+
+with closing(
+    sqlite3.connect(f"file:{backup_path}?mode=ro", uri=True)
+) as restored:
+    assert restored.execute("PRAGMA quick_check").fetchone()[0] == "ok"
+    assert restored.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
 ```
+
+Close and verify the snapshot before compressing it. A recovery drill should decompress into a temporary directory, start a disposable provider against that copy, and run representative recalls. Integrity checks prove database structure; the recall proves that the backup is operationally useful.
 
 A minimal recovery package should contain:
 
@@ -372,9 +396,33 @@ Keep the bridge thin. Hermes already provides the provider lifecycle and the com
 
 That is the useful synergy: Hermes knows what happened, Mnemosyne remembers what matters, and neither system gets to invent the proof.
 
+## Common implementation questions
+
+### Should I disable `MEMORY.md` and `USER.md`?
+
+Only after curated facts have been migrated and recalled from a fresh process. Mnemosyne works while the built-in stores remain enabled, so keep that rollback path during migration. Disable duplicate durable stores once read-back proves the new path.
+
+### Is profile isolation the same as project isolation?
+
+No. Profile isolation separates Hermes profiles or users into different Mnemosyne databases. Project isolation separates execution episodes inside one profile so work from one repository cannot enter another. The hardened design needs both when one profile works across several repositories.
+
+### Which parts require the custom bridge?
+
+Stock integration provides the provider lifecycle, durable memory, and Mnemosyne tools. Project-bound execution episodes, deterministic trajectory extraction, cross-project exclusion, mutation staging, and replay fingerprints require the custom bridge described here.
+
+### Where is the bridge code?
+
+This deployment uses a private, environment-specific provider extension. The public contract is the official Hermes memory-provider API.[1] The article documents the security and data boundaries so another implementation can be reviewed against them without pretending that a private wheel is a supported public package.
+
+### How do I roll back?
+
+Keep a provider-native database backup and the previous Hermes configuration. Switch `memory.provider` back through `hermes config set`, restart the runtime, and read back the active provider before changing or deleting any bridge-created memory. Exact provider names and service commands depend on the installation, so record them during cutover rather than reconstructing them during an incident.
+
 ## Sources
 
-[1] [Hermes Memory Provider Plugins](https://hermes-agent.nousresearch.com/docs/developer-guide/memory-provider-plugin)
-[2] [Hermes Persistent Memory](https://hermes-agent.nousresearch.com/docs/user-guide/features/memory)
-[3] [Using Mnemosyne with Hermes](https://docs.mnemosyne.site/integration/hermes)
-[4] [Mnemosyne GitHub Repository](https://github.com/mnemosyne-oss/mnemosyne)
+[1] https://hermes-agent.nousresearch.com/docs/developer-guide/memory-provider-plugin : Hermes Memory Provider Plugins
+[2] https://hermes-agent.nousresearch.com/docs/user-guide/features/memory : Hermes Persistent Memory
+[3] https://docs.mnemosyne.site/integration/hermes : Using Mnemosyne with Hermes
+[4] https://github.com/mnemosyne-oss/mnemosyne : Mnemosyne GitHub Repository
+[5] https://sqlite.org/backup.html : SQLite Online Backup API
+[6] https://sqlite.org/wal.html : SQLite Write-Ahead Logging
