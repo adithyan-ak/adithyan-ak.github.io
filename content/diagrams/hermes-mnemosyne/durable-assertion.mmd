@@ -1,9 +1,9 @@
 flowchart LR
-    A["Direct durable user assertion<br/>or correction"]
-    B["Explicit foreground<br/>Mnemosyne write"]
-    C["Set provenance<br/><code>veracity = stated</code>"]
-    D["Choose canonical or global scope<br/>only when appropriate"]
-    E["Immediate read-back"]
+    A["Direct durable<br/>user assertion"]
+    B["Ordinary-memory<br/>write"]
+    C["Set provenance<br/><code>source = user</code><br/><code>veracity = stated</code>"]
+    D["Choose explicit session or global scope<br/>and disable extraction"]
+    E["Exact read-back"]
 
     A --> B --> C --> D --> E
 

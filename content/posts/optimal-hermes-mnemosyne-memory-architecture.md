@@ -6,7 +6,7 @@ deck: "How to combine Hermes Agent and Mnemosyne without transcript pollution, c
 slug: "optimal-hermes-mnemosyne-memory-architecture"
 file: "08"
 publishedAt: "2026-08-29T03:10:16.000Z"
-updatedAt: "2026-08-29T05:13:21.000Z"
+updatedAt: "2026-08-31T04:31:46.000Z"
 category: "AI Agent Infrastructure"
 tags:
   - "Hermes Agent"
@@ -32,7 +32,7 @@ The missing piece is ownership. Each system needs a narrow job, and the bridge b
 
 ![Flowchart showing authoritative policy passing through Hermes Agent and a verified learning bridge into Mnemosyne](/images/posts/hermes-mnemosyne-architecture.jpg "Hermes and Mnemosyne memory architecture")
 
-The project binding, trajectory extraction, deterministic verification, mutation staging, and fingerprint deduplication in this diagram are custom bridge behavior. The stock Hermes and Mnemosyne integration does not add those controls by itself.
+The project binding, trajectory extraction, deterministic verification, proportionate mutation controls, and fingerprint deduplication in this diagram are custom bridge behavior. The stock Hermes and Mnemosyne integration does not add those controls by itself.
 
 The ownership rules are strict:
 
@@ -72,7 +72,7 @@ must not disappear because no tool trajectory occurred. The operating rule is na
 
 ![Flowchart for explicitly storing a durable user assertion with stated provenance, appropriate scope, and immediate read-back](/images/posts/hermes-mnemosyne-durable-assertion.jpg "Intentional durable assertion capture")
 
-This is intentional capture, not transcript ingestion. If the statement is ambiguous, temporary, or inferred, the agent should stage it or omit it.
+This is intentional capture, not transcript ingestion. If a potentially durable statement is ambiguous, the agent should ask for clarification rather than stage it or silently omit it. Temporary information and obvious noise should not be stored.
 
 ## Make Mnemosyne the only durable fact store
 
@@ -207,11 +207,10 @@ The policy I use is:
 | --- | --- |
 | Raw conversation autosave | Disabled |
 | Verified project episode | Automatic after evidence, secret, scope, and dedup gates |
-| Direct durable user fact | Foreground write with read-back |
-| Inferred global or canonical fact | Stage |
-| Canonical supersession | Exact foreground request or stage |
-| Update, invalidate, or forget | Read target first; exact foreground approval |
-| Shared-memory write | Disabled |
+| Direct user-stated ordinary memory | Automatic with explicit scope, `source="user"`, `veracity="stated"`, extraction disabled, and exact read-back |
+| Ambiguous ordinary memory | Request clarification; do not stage or silently omit |
+| Update or forget | Stage; require exact foreground `APPLY <pending_id>` and deterministic read-back |
+| Canonical, graph, shared-memory, and other unsupported mutations | Block |
 | Skill modification | Report and staged diff only |
 | Secret-bearing content | Reject |
 
@@ -370,7 +369,7 @@ No. Profile isolation separates Hermes profiles or users into different Mnemosyn
 
 ### Which parts require the custom bridge?
 
-Stock integration provides the provider lifecycle, durable memory, and Mnemosyne tools. Project-bound execution episodes, deterministic trajectory extraction, cross-project exclusion, mutation staging, and replay fingerprints require the custom bridge described here.
+Stock integration provides the provider lifecycle, durable memory, and Mnemosyne tools. Project-bound execution episodes, deterministic trajectory extraction, cross-project exclusion, proportionate mutation controls, and replay fingerprints require the custom bridge described here.
 
 ### Is there a public bridge implementation?
 
