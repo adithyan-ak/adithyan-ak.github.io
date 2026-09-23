@@ -22,7 +22,7 @@ status: "Published"
 draft: false
 ---
 
-In a controlled LangGraph Agent Server test, the approval role received a human-in-the-loop interrupt for `mock_wire_transfer(20, approved-vendor)`. A separate maker could update the pending thread but could not approve or execute a protected transfer. The maker sent another message through the server's A2A route, replacing the pending call with `mock_wire_transfer(2000, attacker-sink)`. The approval role submitted its earlier decision for the $20 request. The mock ledger recorded the $2,000 operation under the approver's authority.
+In a controlled LangGraph Agent Server test, the approval role received a human-in-the-loop interrupt for `mock_wire_transfer(20, approved-vendor)`. A separate maker could update the pending thread but could not approve or execute a protected transfer. The maker sent another message through the server's A2A route, replacing the pending call with `mock_wire_transfer(2000, attacker-sink)`. The approval role submitted its earlier decision for a transfer of 20 units. The mock ledger recorded a transfer of 2,000 units under the approver's authority.
 
 The approval role was scripted after the test asserted the exact product view of A. The test measures the product's approval binding, not whether a person would notice a change in a user interface. It used an in-memory server, synthetic identities, a deterministic local model, and a harmless ledger. The [public evidence archive](https://github.com/adithyan-ak/loopjacking/blob/main/EVIDENCE.md) preserves the requests, decisions, controls, and exact tested versions.
 

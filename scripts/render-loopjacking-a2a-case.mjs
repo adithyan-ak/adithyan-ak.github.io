@@ -60,7 +60,7 @@ function specBoundary() {
   const w=1600,h=900,s=[];
   s.push(mono(72,59,"01 / THE SPECIFICATION BOUNDARY",22,C.red));
   s.push(big(70,147,"A2A MOVES TASK STATE.",86));
-  s.push(big(70,224,"THE APP DEFINES APPROVAL.",77,C.red));
+  s.push(big(70,224,"APPROVAL NEEDS A SCOPE.",77,C.red));
   s.push(line(72,247,1528,247,C.dim,2));
   s.push(panel(72,276,1456,238));
   s.push(mono(104,316,"A2A / COORDINATION",26));
@@ -78,7 +78,7 @@ function specBoundary() {
   }
   s.push(arrow(547,573,424)); s.push(arrow(1023,1049,424));
   s.push(line(72,551,1528,551,C.red,3,'stroke-dasharray="13 11"'));
-  s.push(rect(96,530,426,39,C.bg));
+  s.push(rect(96,530,450,39,C.bg));
   s.push(mono(104,558,"APPLICATION SECURITY BOUNDARY",23,C.red));
   s.push(panel(72,592,1456,232,C.gold,C.panel2));
   s.push(mono(104,633,"IMPLEMENTATION OR CREDENTIAL ISSUER / APPROVAL SEMANTICS",25));
@@ -196,7 +196,8 @@ const base=await readFile(path.join(source,"cover-illustration.png"));
 const cover=coverOverlay();
 await writeFile(path.join(source,"cover-overlay.svg"),cover);
 await sharp(base).composite([{input:Buffer.from(cover),top:0,left:0}])
-  .png({compressionLevel:9}).toFile(path.join(output,"loopjacking-a2a-task-update-cover.png"));
+  .png({palette:true,colours:256,dither:0.5,effort:10,compressionLevel:9})
+  .toFile(path.join(output,"loopjacking-a2a-task-update-cover.png"));
 console.log("loopjacking-a2a-task-update-cover.png: 1672x941");
 for(const [name,png,markup] of [
   ["spec-boundary.svg","loopjacking-a2a-spec-boundary.png",specBoundary()],
