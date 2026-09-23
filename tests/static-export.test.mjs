@@ -4,6 +4,7 @@ import test from "node:test";
 
 const posts = [
   "what-is-loopjacking",
+  "loopjacking-in-a2a-implementations",
   "optimal-hermes-mnemosyne-memory-architecture",
   "build-ai-agent-attack-graph-agenthound",
   "prompt-injection-ai-agent-attack-paths-agenthound",
@@ -64,7 +65,7 @@ test("exports the field-note index with root-level article links", () => {
     /<meta name="twitter:title" content="Adithyan Arun Kumar"/,
   );
   assert.match(html, /Field Notes/i);
-  assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?09/);
+  assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?10/);
   assert.doesNotMatch(html, /[—–]/);
   for (const slug of posts) {
     assert.match(html, new RegExp(`href="/${slug}/"`));
