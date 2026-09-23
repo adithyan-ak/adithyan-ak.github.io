@@ -32,7 +32,7 @@ export function GET() {
     <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
       <channel>
         <title>Adithyan Arun Kumar</title>
-        <link>${absoluteUrl("/blog")}</link>
+        <link>${absoluteUrl("/blog/")}</link>
         <atom:link href="${absoluteUrl("/rss.xml")}" rel="self" type="application/rss+xml" />
         <description>${escapeXml(SITE.description)}</description>
         <language>${SITE.language}</language>

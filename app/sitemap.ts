@@ -20,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
     },
     {
-      url: absoluteUrl("/blog"),
+      url: absoluteUrl("/blog/"),
       lastModified: new Date(latestUpdate),
       changeFrequency: "weekly",
       priority: 0.8,

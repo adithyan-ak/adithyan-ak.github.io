@@ -107,7 +107,7 @@ export function postJsonLd(post: Post) {
         },
         isPartOf: {
           "@type": "Blog",
-          "@id": `${absoluteUrl("/blog")}#blog`,
+          "@id": `${absoluteUrl("/blog/")}#blog`,
           name: `${SITE.name} Field Notes`,
         },
       },
@@ -124,7 +124,7 @@ export function postJsonLd(post: Post) {
             "@type": "ListItem",
             position: 2,
             name: "Field notes",
-            item: absoluteUrl("/blog"),
+            item: absoluteUrl("/blog/"),
           },
           {
             "@type": "ListItem",
