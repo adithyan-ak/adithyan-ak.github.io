@@ -14,6 +14,11 @@ function escapeXml(value: string) {
 
 export function GET() {
   const posts = getAllPosts();
+  const lastUpdated = posts.reduce(
+    (latest, post) =>
+      Date.parse(post.updatedAt) > Date.parse(latest) ? post.updatedAt : latest,
+    posts[0]?.updatedAt ?? new Date().toISOString(),
+  );
   const items = posts
     .map(
       (post) => `
@@ -36,7 +41,7 @@ export function GET() {
         <atom:link href="${absoluteUrl("/rss.xml")}" rel="self" type="application/rss+xml" />
         <description>${escapeXml(SITE.description)}</description>
         <language>${SITE.language}</language>
-        <lastBuildDate>${new Date(posts[0]?.updatedAt ?? Date.now()).toUTCString()}</lastBuildDate>
+        <lastBuildDate>${new Date(lastUpdated).toUTCString()}</lastBuildDate>
         ${items}
       </channel>
     </rss>`;

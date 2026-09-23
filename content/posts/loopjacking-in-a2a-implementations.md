@@ -1,12 +1,12 @@
 ---
-title: "Loopjacking Through A2A Task Updates: When Approval for A Releases B"
-seoTitle: "Loopjacking Through A2A Task Updates: Approval Binding and LangGraph Evidence"
+title: "Loopjacking in A2A Implementations: Hijacking Human-in-the-Loop Approvals"
+seoTitle: "Loopjacking in A2A Implementations: Hijacking Human-in-the-Loop Approvals"
 description: "A tested LangGraph Agent Server composition let an A2A task update replace a pending action after its approval view was read. See the historical A2A scope gap, the evidence, and the use-time defense."
 deck: "A2A keeps agent work addressable across messages. In a tested LangGraph Agent Server composition, an update changed a pending operation after its approval view was read. The implementation then used the earlier decision for the changed action."
 slug: "loopjacking-in-a2a-implementations"
 file: "10"
 publishedAt: "2026-09-21T16:00:00.000Z"
-updatedAt: "2026-09-23T06:33:39.000Z"
+updatedAt: "2026-09-23T07:44:05.000Z"
 category: "Agentic Security Research"
 tags:
   - "Loopjacking"
