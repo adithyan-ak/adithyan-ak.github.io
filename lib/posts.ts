@@ -244,6 +244,14 @@ function renderMarkdown(markdown: string) {
     return `<figure>${image}<figcaption>${escapeAttribute(title)}</figcaption></figure>`;
   };
 
+  renderer.paragraph = function ({ tokens }) {
+    const content = this.parser.parseInline(tokens);
+    if (tokens.length === 1 && tokens[0].type === "image" && tokens[0].title) {
+      return `${content}\n`;
+    }
+    return `<p>${content}</p>\n`;
+  };
+
   renderer.table = function (token) {
     const table = Renderer.prototype.table.call(this, token);
     return `<div class="article-table-scroll" role="region" aria-label="Scrollable data table" tabindex="0">${table}</div>\n`;

@@ -9,10 +9,10 @@ export const metadata: Metadata = {
   title: SITE.title,
   description:
     "Independent research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",
-  alternates: pageAlternates("/blog"),
+  alternates: pageAlternates("/blog/"),
   openGraph: {
     type: "website",
-    url: "/blog",
+    url: "/blog/",
     title: SITE.title,
     description:
       "Independent research notes on agent infrastructure, attack paths, security boundaries, and offensive engineering.",

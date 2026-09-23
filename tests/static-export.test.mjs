@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 const posts = [
+  "what-is-loopjacking",
   "optimal-hermes-mnemosyne-memory-architecture",
   "build-ai-agent-attack-graph-agenthound",
   "prompt-injection-ai-agent-attack-paths-agenthound",
@@ -63,7 +64,7 @@ test("exports the field-note index with root-level article links", () => {
     /<meta name="twitter:title" content="Adithyan Arun Kumar"/,
   );
   assert.match(html, /Field Notes/i);
-  assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?08/);
+  assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?09/);
   assert.doesNotMatch(html, /[—–]/);
   for (const slug of posts) {
     assert.match(html, new RegExp(`href="/${slug}/"`));
@@ -187,7 +188,7 @@ test("exports RSS, robots, sitemap, CNAME, and 404 artifacts", () => {
   assert.match(rss, /<atom:link/);
   assert.match(rss, /Agentmask:|Context-Level Secret Isolation/);
   for (const slug of posts) {
-    assert.match(sitemap, new RegExp(`https://adithyanak\\.com/${slug}`));
+    assert.match(sitemap, new RegExp(`<loc>https://adithyanak\\.com/${slug}/<\\/loc>`));
     assert.doesNotMatch(sitemap, new RegExp(`/blog/${slug}`));
     assert.ok(existsSync(new URL(`../out/${slug}/index.html`, import.meta.url)));
   }
@@ -196,6 +197,39 @@ test("exports RSS, robots, sitemap, CNAME, and 404 artifacts", () => {
   assert.ok(existsSync(new URL("../out/icon.svg", import.meta.url)));
   assert.ok(existsSync(new URL("../out/404.html", import.meta.url)));
   assert.ok(existsSync(new URL("../content/posts/_template.md", import.meta.url)));
+});
+
+test("Loopjacking export uses one canonical URL across SEO surfaces", () => {
+  const slug = "what-is-loopjacking";
+  const url = `https://adithyanak.com/${slug}/`;
+  const image = "https://adithyanak.com/images/posts/loopjacking-cover.webp";
+  const html = exported(`${slug}/index.html`);
+  const sitemap = exported("sitemap.xml");
+  const rss = exported("rss.xml");
+  const robots = exported("robots.txt");
+  const jsonLdSource = html.match(/<script type="application\/ld\+json">([^<]+)<\/script>/)?.[1];
+
+  assert.ok(jsonLdSource, "article JSON-LD is present");
+  const article = JSON.parse(jsonLdSource)["@graph"].find(
+    (entry) => entry["@type"] === "Article",
+  );
+
+  assert.match(html, /<title>What Is Loopjacking\? Approval Hijacking in AI Agents<\/title>/);
+  assert.match(html, /<h1>What Is Loopjacking\?<\/h1>/);
+  assert.ok(html.includes(`<link rel="canonical" href="${url}"`));
+  assert.ok(html.includes(`<meta property="og:url" content="${url}"`));
+  assert.ok(html.includes(`<meta property="og:image" content="${image}"`));
+  assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
+  assert.match(html, /<meta name="robots" content="index, follow"/);
+  assert.doesNotMatch(html, /<p><figure>/);
+  assert.match(html, /<figure><img src="\/images\/posts\/loopjacking-two-approval-paths\.webp"/);
+  assert.equal(article.url, url);
+  assert.equal(article.mainEntityOfPage["@id"], url);
+  assert.equal(article.image.url, image);
+  assert.ok(sitemap.includes(`<loc>${url}</loc>`));
+  assert.ok(rss.includes(`<link>${url}</link>`));
+  assert.match(robots, /Sitemap: https:\/\/adithyanak\.com\/sitemap\.xml/);
+  assert.ok(existsSync(new URL("../out/images/posts/loopjacking-cover.webp", import.meta.url)));
 });
 
 test("does not export prototype or legacy concept routes", () => {

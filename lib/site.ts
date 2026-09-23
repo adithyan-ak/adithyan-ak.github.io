@@ -15,5 +15,5 @@ export function absoluteUrl(path = "/") {
 }
 
 export function postPath(slug: string) {
-  return `/${slug}`;
+  return `/${slug}/`;
 }
