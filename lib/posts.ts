@@ -20,6 +20,10 @@ export type PostFrontmatter = {
   coverImageAlt?: string;
   coverImageWidth?: number;
   coverImageHeight?: number;
+  socialImage?: string;
+  socialImageAlt?: string;
+  socialImageWidth?: number;
+  socialImageHeight?: number;
   status: "Published";
   draft: boolean;
   seoTitle?: string;
@@ -111,6 +115,20 @@ function readFrontmatter(data: Record<string, unknown>, filename: string) {
       "coverImageHeight",
       filename,
     ),
+    socialImage:
+      typeof data.socialImage === "string" ? data.socialImage : undefined,
+    socialImageAlt:
+      typeof data.socialImageAlt === "string" ? data.socialImageAlt : undefined,
+    socialImageWidth: optionalPositiveInteger(
+      data.socialImageWidth,
+      "socialImageWidth",
+      filename,
+    ),
+    socialImageHeight: optionalPositiveInteger(
+      data.socialImageHeight,
+      "socialImageHeight",
+      filename,
+    ),
     status: data.status,
     draft: data.draft,
     seoTitle: typeof data.seoTitle === "string" ? data.seoTitle : undefined,
@@ -129,6 +147,14 @@ function readFrontmatter(data: Record<string, unknown>, filename: string) {
     if (!frontmatter.coverImageWidth || !frontmatter.coverImageHeight) {
       throw new Error(
         `${filename}: coverImageWidth and coverImageHeight are required with coverImage`,
+      );
+    }
+  }
+  if (frontmatter.socialImage) {
+    assertString(frontmatter.socialImageAlt, "socialImageAlt", filename);
+    if (!frontmatter.socialImageWidth || !frontmatter.socialImageHeight) {
+      throw new Error(
+        `${filename}: socialImageWidth and socialImageHeight are required with socialImage`,
       );
     }
   }
@@ -277,6 +303,9 @@ function loadPosts() {
     }
     if (frontmatter.coverImage) {
       assertLocalAsset(frontmatter.coverImage, filename);
+    }
+    if (frontmatter.socialImage) {
+      assertLocalAsset(frontmatter.socialImage, filename);
     }
     validateMarkdownImages(content, filename);
 

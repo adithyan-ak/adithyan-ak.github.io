@@ -1,7 +1,7 @@
 ---
-title: "Agent Name Collision Attacks: When a Display Name Becomes a Routing Key"
-seoTitle: "Agent Name Collision Attacks in Multi-Agent Systems"
-description: "Agent name collisions become security failures when a host promotes remote display metadata into routing identity and dispatches work to the wrong peer."
+title: "Hijacking A2A Tasks with Agent Name Collision Attacks"
+seoTitle: "Hijacking A2A Tasks with Agent Name Collision Attacks"
+description: "How agent name collisions in A2A systems can divert tasks to the wrong peer, what the research proves, and how stable identities prevent unsafe routing."
 deck: "A multi-agent host can admit two distinct peers, then send work intended for the trusted one to the other because it promoted a remote display name into an authority-bearing local identifier."
 slug: "agent-name-collision-attacks-multi-agent-systems"
 file: "11"
@@ -14,10 +14,12 @@ tags:
   - "Agent Identity"
   - "Multi-Agent Systems"
   - "Attack Paths"
-coverImage: "/images/posts/agent-name-collision-attacks-cover.png"
-coverImageAlt: "Trusted agent A and lower-trust agent B share the display name payments, causing a name-derived resolver to dispatch work to B"
-coverImageWidth: 1600
-coverImageHeight: 940
+  - "Agent Name Collision Attacks"
+  - "Task Hijacking"
+socialImage: "/images/posts/agent-name-collision-routing-comparison.png"
+socialImageAlt: "A2A routing comparison: a colliding display name selects the wrong peer, while an origin-bound stable ID preserves the intended endpoint."
+socialImageWidth: 1782
+socialImageHeight: 586
 status: "Published"
 draft: false
 ---
@@ -56,19 +58,13 @@ This is the agent-specific form of [CWE-706: use of an incorrectly resolved name
 
 ## When a collision becomes an attack path
 
-A duplicate name is not sufficient on its own. The paper uses a conjunctive model because treating every duplicate as a critical vulnerability would hide the real boundary. Five conditions need to line up for a confidentiality or integrity path.
+A duplicate name is not sufficient on its own. The paper uses a conjunctive model because treating every duplicate as a critical vulnerability would hide the real boundary. All five conditions must hold for a confidentiality or integrity path:
 
-First, A and B need to share a routing domain: the same host, registry, tool set, workflow namespace, or broker mesh. The collision does not independently enroll B.
-
-Second, the attacker needs control of B's name. B may be an admitted peer allowed to publish or refresh its own card, or an already admitted B may have been compromised. This is an inside-the-admission-boundary model, not an unauthenticated Internet attacker.
-
-Third, B has to win the resolver's collision behavior. The relevant precedence can be list order, last-write-wins replacement, identifier normalization, or a broker binding.
-
-Fourth, a caller, workflow, or model must later select the ambiguous local name. A client that always sends directly to a fixed endpoint has no collision surface here.
-
-Finally, there needs to be a trust difference that makes the substitution matter. If A and B are interchangeable for every routed task, the result may be correctness or availability rather than disclosure or response-integrity loss.
-
-![Five conditions for an agent name collision to create a confidentiality or integrity path](/images/posts/agent-name-collision-attack-conditions.png "The attack model begins after B is admitted or compromised. The paper does not claim a universal enrollment bypass.")
+- **Shared routing domain.** A and B share the same host, registry, tool set, workflow namespace, or broker mesh. The collision does not independently enroll B.
+- **Control of B's name.** An admitted B can publish or refresh its own card, or has been compromised. The attacker operates inside the admission boundary; this is not an unauthenticated Internet attacker.
+- **B wins the collision.** List order, last-write-wins replacement, identifier normalization, or broker binding determines which peer the resolver selects.
+- **Use of the ambiguous name.** A caller, workflow, or model later selects that local name. A client that always sends directly to a fixed endpoint has no collision surface here.
+- **A consequential trust difference.** Substituting B for A changes who may receive the task or supply its response. If the peers are interchangeable for every routed task, the result may be correctness or availability rather than disclosure or response-integrity loss.
 
 The data structure does not define the weakness. A list, dictionary, generated function tool, graph node, request topic, and queue can all fail the same invariant if an untrusted display field becomes the final selector for another principal.
 
@@ -115,7 +111,14 @@ Across the tested Google ADK Python and TypeScript, BeeAI, Any-Agent, and AutoDe
 
 No tested target transferred an A-owned in-process tool object to B or deterministically executed a privileged A or host action solely because of the collision. UiPath and BeeAI did demonstrate two second-stage dataflows: B-controlled output reached a model context where a host-only tool was available, and a scripted model selected that tool. That confirms reachability to another decision point. It is a compound prompt-injection path, not direct authority inheritance, and it does not estimate production-model reliability.
 
-![Evidence boundary for wrong-peer dispatch, conditional delegated context, and non-demonstrated direct credential or tool transfer](/images/posts/agent-name-collision-authority-boundary.png "The demonstrated common result is wrong-peer dispatch. Stronger outcomes depend on the deployment and later decision points.")
+The evidence has different boundaries for each outcome:
+
+| Outcome | What the study establishes |
+| --- | --- |
+| Wrong-peer dispatch | Demonstrated in six client-style paths: an A-selected request reached B's client or loopback endpoint. |
+| Brokered delegated context | Conditional on the deployment attaching useful context and B being able to consume the collided route. |
+| Later host-tool action | Two controlled paths reached a model context with a host tool, which a scripted model selected. This does not establish production-model reliability or direct authority inheritance. |
+| Direct credential or tool transfer | No direct A-specific credential transfer or transfer of an A-owned in-process tool was demonstrated in the tested client bindings. |
 
 The broker path has a different conditional authority boundary. Its publish path forwards an `a2aUserConfig` object to the name-derived route. That object may contain caller identity, scopes, or delegated tokens. B receives useful authority only if the deployment populated it and B can consume the collided route. The right finding is one conditional delegated-context case, not a universal token leak.
 

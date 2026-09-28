@@ -1,0 +1,30 @@
+{
+  "theme": "base",
+  "look": "classic",
+  "flowchart": {
+    "curve": "basis",
+    "htmlLabels": true,
+    "nodeSpacing": 55,
+    "rankSpacing": 70,
+    "padding": 18,
+    "useMaxWidth": false
+  },
+  "themeVariables": {
+    "background": "#f7f4ed",
+    "fontFamily": "IBM Plex Mono, ui-monospace, monospace",
+    "fontSize": "17px",
+    "primaryColor": "#f0e4ce",
+    "primaryTextColor": "#191715",
+    "primaryBorderColor": "#8a6f47",
+    "secondaryColor": "#dce8e9",
+    "secondaryTextColor": "#191715",
+    "secondaryBorderColor": "#56777a",
+    "tertiaryColor": "#e8e1d4",
+    "tertiaryTextColor": "#191715",
+    "tertiaryBorderColor": "#746858",
+    "lineColor": "#5f5241",
+    "edgeLabelBackground": "#f7f4ed",
+    "clusterBkg": "#f7f4ed",
+    "clusterBorder": "#8a6f47"
+  }
+}

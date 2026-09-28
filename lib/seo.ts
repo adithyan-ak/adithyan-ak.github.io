@@ -16,19 +16,24 @@ export function pageAlternates(canonical: string): Metadata["alternates"] {
   };
 }
 
+function postImage(post: Post) {
+  const social = Boolean(post.socialImage);
+  const width = social ? post.socialImageWidth : post.coverImageWidth;
+  const height = social ? post.socialImageHeight : post.coverImageHeight;
+  return {
+    url: post.socialImage ?? post.coverImage ?? "/og-dossier.png",
+    alt: (social ? post.socialImageAlt : post.coverImageAlt) ?? post.title,
+    ...(width && height
+      ? { width, height }
+      : {}),
+  };
+}
+
 export function postMetadata(post: Post): Metadata {
   const title = post.seoTitle ?? post.title;
   const description = post.seoDescription ?? post.description;
   const canonicalPath = postPath(post.slug);
-  const image = post.coverImage ?? "/og-dossier.png";
-  const imageAlt = post.coverImageAlt ?? post.title;
-  const imageMetadata = {
-    url: image,
-    alt: imageAlt,
-    ...(post.coverImageWidth && post.coverImageHeight
-      ? { width: post.coverImageWidth, height: post.coverImageHeight }
-      : {}),
-  };
+  const imageMetadata = postImage(post);
 
   return {
     title,
@@ -55,21 +60,22 @@ export function postMetadata(post: Post): Metadata {
       card: "summary_large_image",
       title,
       description,
-      images: [{ url: image, alt: imageAlt }],
+      images: [imageMetadata],
     },
   };
 }
 
 export function postJsonLd(post: Post) {
   const url = absoluteUrl(postPath(post.slug));
-  const image = absoluteUrl(post.coverImage ?? "/og-dossier.png");
+  const metadata = postImage(post);
+  const image = absoluteUrl(metadata.url);
   const imageObject = {
     "@type": "ImageObject",
     url: image,
     contentUrl: image,
-    caption: post.coverImageAlt ?? post.title,
-    ...(post.coverImageWidth && post.coverImageHeight
-      ? { width: post.coverImageWidth, height: post.coverImageHeight }
+    caption: metadata.alt,
+    ...(metadata.width && metadata.height
+      ? { width: metadata.width, height: metadata.height }
       : {}),
   };
 

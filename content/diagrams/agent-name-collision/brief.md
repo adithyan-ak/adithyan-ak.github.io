@@ -14,12 +14,11 @@ Audience: A2A implementers, multi-agent platform engineers, framework maintainer
 
 ## Visuals
 
-1. Cover: a trusted peer and a lower-trust peer converge on the same display name; an unsafe route dispatches to B.
-2. Routing comparison: separate unsafe and safe lanes. The safe lane shows an origin-bound stable ID selecting the intended endpoint.
-3. Conditions: five prerequisites for a duplicate name to become a confidentiality or integrity path.
-4. Implementation shapes: agent-tree lookup, tool identity, client-map replacement, and broker naming collapse.
-5. Authority boundary: proven wrong-peer dispatch versus conditional delegated context and non-demonstrated direct credential/tool transfer.
-6. Defense lifecycle: enroll identity, describe with a name, resolve by stable ID, and carry the ID to tools, workflows, and broker routes.
+1. Routing comparison: name-based lookup versus an origin-bound stable ID selecting the intended endpoint.
+2. Implementation patterns: agent-tree lookup, tool identity, client-map replacement, and broker naming collapse.
+3. Defense lifecycle: enroll identity, describe with a name, resolve by stable ID, and preserve the binding at dispatch.
+
+The five attack conditions are a checklist in the article: they must hold together and are not sequential steps. The evidence boundary is an HTML table distinguishing demonstrated results from conditional outcomes. There is no separate cover diagram because it duplicated the routing comparison.
 
 ## Sources
 
@@ -28,3 +27,11 @@ Audience: A2A implementers, multi-agent platform engineers, framework maintainer
 - Historical A2A specification revision: https://github.com/a2aproject/A2A/commit/98853be376c88df25e1704771cd3ea9ef8823a96
 - A2A Agent Card identifier proposal: https://github.com/a2aproject/A2A/issues/1014
 - CWE-706: https://cwe.mitre.org/data/definitions/706.html
+
+## Production
+
+The three landscape Mermaid flowcharts reuse the exact `mermaid-config.json` from `content/diagrams/hermes-mnemosyne`, including classic boxes, curved connectors, the monospace font stack, cream background, and muted colors. Each image contains only the flowchart; explanatory prose stays in the article.
+
+Editable sources are the three `agent-name-collision-*.mmd` files. The renderer writes matching SVGs and production PNGs.
+
+Render with `node scripts/render-agent-name-collision.mjs` using Mermaid CLI 11.4.2 and Puppeteer 23. Module paths can be supplied through `MERMAID_CLI_MODULE` and `PUPPETEER_MODULE`; `MERMAID_CHROME` optionally selects the browser executable.

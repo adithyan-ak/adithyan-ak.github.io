@@ -84,10 +84,17 @@ test("every article has inherited SEO, structured data, and rendered Markdown", 
     );
     assert.match(html, /<meta name="description" content="[^"]+"/);
     assert.match(html, /<meta property="og:type" content="article"/);
-    assert.match(html, /<meta property="og:image" content="https:\/\/adithyanak\.com\/images\/posts\/[^\"]+"/);
+    const hasCover = slug !== "agent-name-collision-attacks-multi-agent-systems";
+    if (hasCover) {
+      assert.match(html, /<meta property="og:image" content="https:\/\/adithyanak\.com\/images\/posts\/[^\"]+"/);
+      assert.match(html, /<meta property="og:image:width" content="\d+"/);
+      assert.match(html, /<meta property="og:image:height" content="\d+"/);
+      assert.match(html, /<figure class="[^"]*articleCover[^"]*"/);
+    } else {
+      assert.match(html, /<meta property="og:image" content="https:\/\/adithyanak\.com\/images\/posts\/agent-name-collision-routing-comparison\.png"/);
+      assert.doesNotMatch(html, /<figure class="[^"]*articleCover[^"]*"/);
+    }
     assert.match(html, /<meta property="og:image:alt" content="[^\"]+"/);
-    assert.match(html, /<meta property="og:image:width" content="\d+"/);
-    assert.match(html, /<meta property="og:image:height" content="\d+"/);
     assert.match(html, /<meta name="twitter:card" content="summary_large_image"/);
     assert.match(html, /<meta property="article:published_time"/);
     assert.match(
@@ -98,7 +105,6 @@ test("every article has inherited SEO, structured data, and rendered Markdown", 
     assert.match(html, /"@type":"ImageObject"/);
     assert.match(html, /"@type":"BreadcrumbList"/);
     assert.match(html, /class="[^"]*prose[^"]*"/);
-    assert.match(html, /<figure class="[^"]*articleCover[^"]*"/);
     assert.match(html, /<h2 id="[^"]+" data-section="01">/);
     assert.doesNotMatch(html, /[—–]/);
     assert.doesNotMatch(html, /Declassified field note|>Declassified<|\/ Declassified/);
@@ -132,19 +138,42 @@ test("exports the agent-name collision field note with its local visual record",
 
   assert.match(
     html,
-    /Agent Name Collision Attacks: When a Display Name Becomes a Routing Key/,
+    /Hijacking A2A Tasks with Agent Name Collision Attacks/,
   );
   assert.match(html, /wrong-peer dispatch/i);
   for (const asset of [
     "agent-name-collision-routing-comparison.png",
-    "agent-name-collision-attack-conditions.png",
     "agent-name-collision-implementation-patterns.png",
-    "agent-name-collision-authority-boundary.png",
     "agent-name-collision-defense-lifecycle.png",
   ]) {
     assert.match(html, new RegExp(`/images/posts/${asset}`));
     assert.ok(existsSync(new URL(`../out/images/posts/${asset}`, import.meta.url)));
   }
+  assert.doesNotMatch(html, /agent-name-collision-(attacks-cover|attack-conditions|authority-boundary)\.png/);
+  assert.match(html, /All five conditions must hold/);
+  assert.match(html, /<th>What the study establishes<\/th>/);
+  const title = "Hijacking A2A Tasks with Agent Name Collision Attacks";
+  assert.ok(html.includes(`<h1>${title}</h1>`));
+  assert.ok(html.includes(`<title>${title}</title>`));
+  assert.ok(html.includes(`<meta property="og:title" content="${title}"`));
+  assert.ok(html.includes(`<meta name="twitter:title" content="${title}"`));
+  const description = "How agent name collisions in A2A systems can divert tasks to the wrong peer, what the research proves, and how stable identities prevent unsafe routing.";
+  assert.ok(html.includes(`<meta name="description" content="${description}"`));
+  assert.ok(html.includes(`<meta property="og:description" content="${description}"`));
+  assert.ok(html.includes(`<meta name="twitter:description" content="${description}"`));
+  const socialImage = "https://adithyanak.com/images/posts/agent-name-collision-routing-comparison.png";
+  assert.ok(html.includes(`<meta name="twitter:image" content="${socialImage}"`));
+  assert.match(html, /<meta property="og:image:width" content="1782"/);
+  assert.match(html, /<meta property="og:image:height" content="586"/);
+  const jsonLd = JSON.parse(html.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1]);
+  const article = jsonLd["@graph"].find((item) => item["@type"] === "Article");
+  assert.equal(article.headline, title);
+  assert.equal(article.description, description);
+  assert.equal(article.image.url, socialImage);
+  assert.equal(article.image.width, 1782);
+  assert.equal(article.image.height, 586);
+  assert.ok(exported("blog/index.html").includes(title));
+  assert.ok(exported("rss.xml").includes(title));
 });
 
 test("keeps migrated content and media independent from Hashnode", () => {

@@ -1,0 +1,21 @@
+flowchart LR
+    N["Remote display name"]
+    A["Agent tree<br/>First match wins"]
+    B["Generated tool<br/>Names collide"]
+    C["Client map<br/>Entry replaced"]
+    D["Broker<br/>Names collapse"]
+    P["Wrong peer selected"]
+    Q["Shared topic or queue<br/>Delivery is conditional"]
+    N --> A & B & C & D
+    A & B & C --> P
+    D --> Q
+    class N input;
+    class A,B,C,D process;
+    class P wrong;
+    class Q neutral;
+
+    classDef input fill:#dce8e9,stroke:#56777a,stroke-width:2px,color:#191715;
+    classDef process fill:#f0e4ce,stroke:#8a6f47,stroke-width:2px,color:#191715;
+    classDef good fill:#dfe9d8,stroke:#607b53,stroke-width:2px,color:#191715;
+    classDef wrong fill:#ead9d6,stroke:#8a5b55,stroke-width:2px,color:#191715;
+    classDef neutral fill:#eee6d8,stroke:#746858,stroke-width:2px,color:#191715;
