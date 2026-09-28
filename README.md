@@ -43,6 +43,8 @@ same frontmatter. There is no second metadata file to keep synchronized.
 | `coverImage` | Local article hero and social-preview image path |
 | `coverImageAlt` | Descriptive alternative text for the hero and social image |
 | `coverImageWidth` / `coverImageHeight` | Intrinsic pixel dimensions used to prevent layout shift |
+| `socialImage` / `socialImageAlt` | Optional search and social preview image and descriptive alt text, independent of the visible cover |
+| `socialImageWidth` / `socialImageHeight` | Required intrinsic dimensions when `socialImage` is set; used in Open Graph and Article structured data |
 | `status` | `Published` |
 | `draft` | `true` keeps the post out of all generated routes |
 

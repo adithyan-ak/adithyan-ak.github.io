@@ -1,0 +1,13 @@
+flowchart LR
+    A["Request for A<br/>by display name"] --> B["Lookup: payments<br/>B wins collision"] --> C["Endpoint B<br/>Wrong peer"]
+    D["Request for A<br/>by stable ID"] --> E["Origin-bound ID<br/>still identifies A"] --> F["Endpoint A<br/>Intended peer"]
+    class A,D input;
+    class B,E process;
+    class C wrong;
+    class F good;
+
+    classDef input fill:#dce8e9,stroke:#56777a,stroke-width:2px,color:#191715;
+    classDef process fill:#f0e4ce,stroke:#8a6f47,stroke-width:2px,color:#191715;
+    classDef good fill:#dfe9d8,stroke:#607b53,stroke-width:2px,color:#191715;
+    classDef wrong fill:#ead9d6,stroke:#8a5b55,stroke-width:2px,color:#191715;
+    classDef neutral fill:#eee6d8,stroke:#746858,stroke-width:2px,color:#191715;
