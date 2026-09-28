@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import test from "node:test";
 
 const posts = [
+  "agent-name-collision-attacks-multi-agent-systems",
   "what-is-loopjacking",
   "loopjacking-in-a2a-implementations",
   "optimal-hermes-mnemosyne-memory-architecture",
@@ -65,7 +66,7 @@ test("exports the field-note index with root-level article links", () => {
     /<meta name="twitter:title" content="Adithyan Arun Kumar"/,
   );
   assert.match(html, /Field Notes/i);
-  assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?10/);
+  assert.match(html, /Entries<\/span>\s*(?:<!-- -->)?11/);
   assert.doesNotMatch(html, /[—–]/);
   for (const slug of posts) {
     assert.match(html, new RegExp(`href="/${slug}/"`));
@@ -124,6 +125,26 @@ test("keeps article chrome lean without contents or redundant metadata", () => {
   );
   assert.match(archive, /Independent research notes/);
   assert.doesNotMatch(archive, /Declassified research notes/);
+});
+
+test("exports the agent-name collision field note with its local visual record", () => {
+  const html = exported("agent-name-collision-attacks-multi-agent-systems/index.html");
+
+  assert.match(
+    html,
+    /Agent Name Collision Attacks: When a Display Name Becomes a Routing Key/,
+  );
+  assert.match(html, /wrong-peer dispatch/i);
+  for (const asset of [
+    "agent-name-collision-routing-comparison.png",
+    "agent-name-collision-attack-conditions.png",
+    "agent-name-collision-implementation-patterns.png",
+    "agent-name-collision-authority-boundary.png",
+    "agent-name-collision-defense-lifecycle.png",
+  ]) {
+    assert.match(html, new RegExp(`/images/posts/${asset}`));
+    assert.ok(existsSync(new URL(`../out/images/posts/${asset}`, import.meta.url)));
+  }
 });
 
 test("keeps migrated content and media independent from Hashnode", () => {
