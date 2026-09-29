@@ -120,7 +120,9 @@ export default function DossierFieldNotes() {
               <span>Distribution</span>
               <p>
                 <a href="/rss.xml">RSS feed ↗</a>
-                <a href="mailto:adithyan@adithyanak.com">Email ↗</a>
+                <a href={SITE.linkedin} target="_blank" rel="noreferrer">
+                  LinkedIn ↗
+                </a>
               </p>
             </div>
           </aside>

@@ -10,7 +10,7 @@ import {
 } from "./data";
 import { getAllPosts } from "@/lib/posts";
 import { pageAlternates } from "@/lib/seo";
-import { postPath } from "@/lib/site";
+import { postPath, SITE } from "@/lib/site";
 import styles from "./dossier.module.css";
 
 export const metadata: Metadata = {
@@ -73,8 +73,8 @@ export default function Home() {
                   </p>
                 </div>
                 <nav className={styles.contact} aria-label="Contact links">
-                  <a href="mailto:adithyan@adithyanak.com">
-                    <span>01</span> Email
+                  <a href={SITE.linkedin} target="_blank" rel="noreferrer">
+                    <span>01</span> LinkedIn ↗
                   </a>
                   <a
                     href="https://github.com/adithyan-ak"
@@ -293,8 +293,8 @@ export default function Home() {
               <span />
               <span />
             </div>
-            <a href="mailto:adithyan@adithyanak.com">
-              adithyan@adithyanak.com
+            <a href={SITE.linkedin} target="_blank" rel="noreferrer">
+              LinkedIn ↗
             </a>
           </footer>
         </article>
