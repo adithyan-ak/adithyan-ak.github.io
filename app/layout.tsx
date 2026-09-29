@@ -1,20 +1,47 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Newsreader } from "next/font/google";
+import localFont from "next/font/local";
 import { pageAlternates } from "@/lib/seo";
 import { SITE } from "@/lib/site";
 import "./globals.css";
 
-const body = Newsreader({
+const body = localFont({
   variable: "--font-body",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  adjustFontFallback: "Times New Roman",
+  display: "swap",
+  src: [
+    {
+      path: "./fonts/newsreader/Newsreader[opsz,wght].woff2",
+      weight: "400 700",
+      style: "normal",
+    },
+    {
+      path: "./fonts/newsreader/Newsreader-Italic[opsz,wght].woff2",
+      weight: "400 700",
+      style: "italic",
+    },
+  ],
 });
 
-const mono = IBM_Plex_Mono({
+const mono = localFont({
   variable: "--font-mono",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  display: "swap",
+  src: [
+    {
+      path: "./fonts/ibmplexmono/IBMPlexMono-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/ibmplexmono/IBMPlexMono-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "./fonts/ibmplexmono/IBMPlexMono-SemiBold.woff2",
+      weight: "600",
+      style: "normal",
+    },
+  ],
 });
 
 export const metadata: Metadata = {
