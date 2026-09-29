@@ -6,7 +6,7 @@ export const SITE = {
   url: "https://adithyanak.com",
   locale: "en_US",
   language: "en-US",
-  email: "adithyan@adithyanak.com",
+  linkedin: "https://www.linkedin.com/in/akoffsec/",
   github: "https://github.com/adithyan-ak",
 } as const;
 
